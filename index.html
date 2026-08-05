@@ -936,6 +936,19 @@
   @media (max-width: 640px) {
     .section-pad { padding: 48px 20px; }
     .nav, .nav.is-scrolled { padding: 12px 20px; }
+    /* .section-pad's shorthand padding above wins over .hero's own padding-top
+       (same specificity, later in source), so the hero needs its own mobile
+       value here — sized to clear the compact mobile nav below plus a gap. */
+    .hero { padding-top: 112px; }
+    /* At this width brand + lang toggle + CTA don't fit on one row and the
+       overflow gets clipped by the page's overflow-x: hidden, so the actions
+       silently disappear off-screen. Shrink everything to fit instead. */
+    .nav-brand { height: 22px; }
+    .nav-actions { gap: 8px; }
+    .lang-toggle { padding: 0 10px; }
+    .lang-toggle svg { display: none; }
+    .nav .btn { padding: 0 14px; font-size: 13px; }
+    .nav .btn svg { display: none; }
   }
 </style>
 </head>

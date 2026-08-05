@@ -869,31 +869,31 @@
   .faq-a a { color: var(--accent); text-decoration: underline; }
   .faq-a p + p { margin-top: 10px; }
 
-  /* ---------- Footer / CTA final ---------- */
-  /* Same treatment as the hero: soft colour blobs behind the content. The film
-     grain is already global (body::before), so it lands here on its own. */
-  footer.section--dark { position: relative; overflow: hidden; }
-  footer.section--dark > .container { position: relative; z-index: 1; }
-  .footer-glow {
+  /* ---------- Ambient glow (reusable) ----------
+     The hero's soft colour blobs, packaged for any dark block. The film grain is
+     already global via body::before, so it lands on these on its own. Positions
+     are set per placement below. */
+  .has-glow { overflow: hidden; }
+  .has-glow > .container { position: relative; z-index: 1; }
+  .section-glow {
     position: absolute;
     inset: 0;
     overflow: hidden;
     pointer-events: none;
     z-index: 0;
   }
-  .footer-blob { position: absolute; border-radius: 50%; filter: blur(90px); }
-  .footer-blob--pink {
-    width: 420px; height: 420px;
-    bottom: -180px; left: -6%;
-    background: var(--accent);
-    opacity: 0.20;
-  }
-  .footer-blob--blue {
-    width: 380px; height: 380px;
-    top: -170px; right: -6%;
-    background: #38BDF8;
-    opacity: 0.20;
-  }
+  .section-blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.20; }
+  .section-blob--pink { background: var(--accent); }
+  .section-blob--blue { background: #38BDF8; }
+
+  /* Use cases */
+  .usecases-glow .section-blob--pink { width: 460px; height: 460px; top: -160px; left: -7%; }
+  .usecases-glow .section-blob--blue { width: 420px; height: 420px; bottom: -190px; right: -7%; }
+  /* Footer */
+  .footer-glow .section-blob--pink { width: 420px; height: 420px; bottom: -180px; left: -6%; }
+  .footer-glow .section-blob--blue { width: 380px; height: 380px; top: -170px; right: -6%; }
+
+  /* ---------- Footer / CTA final ---------- */
   .footer-note { font-size: 12px; color: var(--ink-secondary-on-dark); margin-top: 24px; max-width: 520px; margin-left: auto; margin-right: auto; }
   /* Partner lockup. The -on-dark artwork is the white/reversed cut, which is what
      this dark footer needs; the -on-light files are the counterparts if the block
@@ -1074,7 +1074,11 @@ Los Angeles, CA 90012</p>
 </section>
 
 <!-- 3. CONTEXTOS DE USO -->
-<section class="section--dark section-pad">
+<section class="section--dark section-pad has-glow">
+  <span class="section-glow usecases-glow" aria-hidden="true">
+    <span class="section-blob section-blob--pink"></span>
+    <span class="section-blob section-blob--blue"></span>
+  </span>
   <div class="container" style="text-align:center;">
     <h2 class="section-title reveal" data-i18n="usecases.title">Onde ele entra na sua operação</h2>
     <p class="subtext subtext--wide reveal" style="margin:14px auto 0;" data-i18n="usecases.subtitle">Do dia a dia do salão aos picos sazonais e às ativações fora da loja.</p>
@@ -1199,10 +1203,10 @@ Los Angeles, CA 90012</p>
 </section>
 
 <!-- 6. CTA FINAL / FOOTER -->
-<footer class="section--dark section-pad" style="text-align:center; padding-bottom:56px;">
-  <span class="footer-glow" aria-hidden="true">
-    <span class="footer-blob footer-blob--pink"></span>
-    <span class="footer-blob footer-blob--blue"></span>
+<footer class="section--dark section-pad has-glow" style="text-align:center; padding-bottom:56px;">
+  <span class="section-glow footer-glow" aria-hidden="true">
+    <span class="section-blob section-blob--pink"></span>
+    <span class="section-blob section-blob--blue"></span>
   </span>
   <div class="container reveal" style="display:flex; flex-direction:column; align-items:center; gap:20px;">
     <h2 class="section-title" style="font-size:clamp(26px,3.4vw,36px);" data-i18n="footer.title">Pronto para escalar sua operação?</h2>

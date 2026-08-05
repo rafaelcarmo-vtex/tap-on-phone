@@ -352,6 +352,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    /* On short viewports the phone (fixed max-width, so a tall aspect-ratio box)
+       can be taller than the sticky viewport-height box it's centered in, which
+       pulls it upward past this box's own top edge — straight into the copy above.
+       "safe center" falls back to flex-start (this padding-top) instead of
+       overflowing upward, guaranteeing a floor on the text-to-phone gap; the
+       plain "center" first is a fallback for browsers that don't support "safe". */
+    padding-top: 40px;
+    align-items: center;
+    align-items: safe center;
   }
   .phone-frame {
     position: relative;
@@ -644,6 +653,18 @@
     color: var(--ink-secondary);
     margin-top: 2px;
     width: var(--detail-w, auto);
+  }
+  /* Typewriter reveal. Characters are hidden with visibility rather than display
+     so they keep occupying their space — the paragraph is already at full height
+     while it types, which is what keeps the locked row height honest. Each span
+     carries its own delay and flips on instantly, giving the keyed-in feel. */
+  .type-char { visibility: hidden; transition: visibility 0s linear 0s; }
+  .progress-card.is-active .type-char {
+    visibility: visible;
+    transition: visibility 0s linear var(--d, 0s);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .type-char { visibility: visible; transition: none; }
   }
   /* Height probe: snap every state instantly so the staggered transitions above
      cannot skew the reads. Must outrank the .is-active detail rule, hence the
@@ -1894,6 +1915,26 @@ Los Angeles, CA 90012</p>
   const CHAR_STAGGER_MS = 26;
   const HERO_CHAR_DURATION_MS = 500;   // matches the hero-char-in animation
   const SUBTEXT_DURATION_MS = 600;     // matches the hero-subtext-in animation
+
+  // Wraps each character of the benefit copy so it can be keyed in one by one.
+  // Re-run after a language swap, since the dictionary rewrites textContent.
+  const TYPE_STEP_MS = 16;
+  const TYPE_START_MS = 640;   // waits for the column to widen and the panel to open
+  function splitTypingText() {
+    document.querySelectorAll('.progress-card-detail p').forEach((paragraph) => {
+      const text = paragraph.textContent;
+      const frag = document.createDocumentFragment();
+      Array.from(text).forEach((ch, i) => {
+        const span = document.createElement('span');
+        span.className = 'type-char';
+        span.textContent = ch;
+        span.style.setProperty('--d', `${TYPE_START_MS + i * TYPE_STEP_MS}ms`);
+        frag.appendChild(span);
+      });
+      paragraph.textContent = '';
+      paragraph.appendChild(frag);
+    });
+  }
   function splitHeroTitle() {
     const el = document.querySelector('[data-i18n-html="hero.title"]');
     if (!el) return;
@@ -1975,6 +2016,7 @@ Los Angeles, CA 90012</p>
 
     localStorage.setItem(STORAGE_KEY, lang);
     splitHeroTitle();
+    splitTypingText();
     if (relockProgressCards) relockProgressCards();
     if (typeof resyncOpenFaq === 'function') resyncOpenFaq();
   }

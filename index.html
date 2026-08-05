@@ -813,6 +813,10 @@
     margin-top: 4px;
   }
   .partner-logo { height: 22px; width: auto; opacity: 0.85; }
+  /* The Cielo mark has less internal padding than the VTEX one, so it reads
+     bigger at the same height. With border-box the padding shrinks the artwork
+     inside the same 22px slot, evening the two out. */
+  .partner-logo--cielo { padding: 2px; }
   .partner-divider { width: 1px; height: 20px; background: rgba(255, 255, 255, 0.18); }
 
   @media (max-width: 640px) {
@@ -1113,7 +1117,7 @@ Los Angeles, CA 90012</p>
     <div class="partners">
       <img class="partner-logo" src="assets/vtex-on-dark.svg" alt="VTEX">
       <span class="partner-divider" aria-hidden="true"></span>
-      <img class="partner-logo" src="assets/cielo-on-dark.svg" alt="Cielo">
+      <img class="partner-logo partner-logo--cielo" src="assets/cielo-on-dark.svg" alt="Cielo">
     </div>
   </div>
 </footer>

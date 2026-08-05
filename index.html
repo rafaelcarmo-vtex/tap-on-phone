@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tap on Phone — VTEX Sales App</title>
+<meta id="metaDescription" name="description" content="A venda na mão do vendedor. O pedido, na VTEX. Com o Sales App, cada vendedor vende e cobra por aproximação direto do celular — sem fila, sem caixa fixo, e com o pedido certo na hora.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark-1: #142032;
+    --dark-2: #1a2d47;
+    --icon-bg: rgba(42, 58, 85, 0.9);
+    --accent: #F71963;
+    --white: #FFFFFF;
+    --ink: #142032;
+    --ink-secondary: #5C6478;
+    --ink-secondary-on-dark: #A1A8B7;
+    --border-light: #EAEAEA;
+    --font-body: "Inter", system-ui, -apple-system, sans-serif;
+    --font-display: "Inter Tight", "Inter", system-ui, -apple-system, sans-serif;
+    --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+    overflow-x: hidden;
+    position: relative;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-repeat: repeat;
+    background-size: 180px 180px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  h1, h2, h3 { margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+  p { margin: 0; }
+  img { display: block; max-width: 100%; }
+  button { font-family: inherit; }
+  section { position: relative; }
+
+  .section-pad { padding: clamp(56px, 9vh, 100px) 24px; }
+  .section--dark { background: linear-gradient(155deg, var(--dark-1), var(--dark-2)); color: var(--white); }
+  .section--dark .subtext { color: var(--ink-secondary-on-dark); }
+  .section--light { background: var(--white); }
+  .section--light .subtext { color: var(--ink-secondary); }
+
+  .container { max-width: 1120px; margin: 0 auto; }
+
+  .section-title {
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.15;
+  }
+  /* Section supporting copy. The hero's own subtitle overrides the size below,
+     since it leads the page and stays a step larger. */
+  .subtext {
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    max-width: 55ch;
+  }
+  /* Pure fade, no rise — and it waits for the headline to finish typing itself
+     in. The delay is set inline in JS, since it depends on the character count
+     of whichever language is active. */
+  .hero-content .subtext {
+    font-size: clamp(16px, 1.6vw, 18px);
+    letter-spacing: -0.02em;
+    opacity: 0;
+    animation: hero-subtext-in 0.6s ease forwards;
+  }
+  @keyframes hero-subtext-in {
+    to { opacity: 0.8; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-content .subtext { animation: none; opacity: 0.8; }
+  }
+  :lang(pt-BR) .subtext { max-width: 46ch; }
+  /* Opts a supporting line out of the default measure so it can run full width
+     and stay on one line. Repeats the :lang selector to outrank the rule above. */
+  .subtext--wide,
+  :lang(pt-BR) .subtext--wide { max-width: none; }
+  /* A looser measure for the longer supporting lines: wide enough to settle on
+     two lines in both languages, with slack so a copy tweak won't spill to three. */
+  .subtext--roomy,
+  :lang(pt-BR) .subtext--roomy { max-width: 62ch; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 10px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .btn:hover { opacity: 0.9; }
+  .btn:active { transform: scale(0.97); }
+  .btn--primary { background: var(--accent); color: #fff; }
+  .btn--secondary { background: none; border: 1px solid var(--border-light); color: var(--ink); }
+  .btn--secondary:hover { background: #F5F5F7; }
+
+  .scope-note { font-size: 13px; font-weight: 400; color: var(--ink-secondary-on-dark); }
+  .section--light .scope-note { color: var(--ink-secondary); }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 140px;
+    background: transparent;
+    transition: padding 0.3s ease, background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
+    border-bottom: 1px solid transparent;
+  }
+  /* Roomy over the hero, then tightens into a compact bar once past it. */
+  .nav.is-scrolled {
+    padding: 16px 140px;
+    background: rgba(20, 32, 50, 0.82);
+    backdrop-filter: blur(14px);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+  /* Over a light section the bar flips to a white backdrop with the pink mark. */
+  .nav.is-scrolled.is-light {
+    background: rgba(255, 255, 255, 0.86);
+    border-bottom-color: rgba(20, 32, 50, 0.10);
+  }
+  .nav-brand { position: relative; display: flex; align-items: center; height: 28px; }
+  .nav-brand img { height: 100%; width: auto; transition: opacity 0.3s ease; }
+  /* Both marks are always in the DOM and cross-fade; the white one drives the
+     layout while the pink one rides on top. */
+  .nav-logo--pink { position: absolute; left: 0; top: 0; opacity: 0; }
+  .nav.is-light .nav-logo--white { opacity: 0; }
+  .nav.is-light .nav-logo--pink { opacity: 1; }
+  .nav.is-light .lang-toggle { color: var(--ink); }
+  .nav.is-light .lang-toggle:hover,
+  .nav.is-light .lang-toggle:focus-visible { border-color: rgba(20, 32, 50, 0.25); }
+  .nav .btn { height: 40px; padding: 0 20px; font-size: 14px; }
+  .nav-actions { display: flex; align-items: center; gap: 12px; }
+  .lang-toggle-wrap { position: relative; display: flex; align-items: center; }
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    background: none;
+    /* Border stays transparent rather than absent so the button keeps the same
+       width and the label never shifts when the outline appears on hover. */
+    border: 1px solid transparent;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+  }
+  .lang-toggle:hover,
+  .lang-toggle:focus-visible { border-color: rgba(255, 255, 255, 0.25); }
+  .lang-toggle svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .lang-tooltip {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: #0B0F17;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 60;
+  }
+  .lang-tooltip::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-bottom-color: #0B0F17;
+  }
+  .lang-toggle-wrap:hover .lang-tooltip,
+  .lang-tooltip.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s cubic-bezier(.16,1,.3,1), transform 0.7s cubic-bezier(.16,1,.3,1); }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+  /* ---------- Product shot: NO wrapper chrome — the PNG already IS the device frame.
+     Rendered at native aspect ratio (height:auto) with only a drop-shadow, so we never
+     draw a second rounded-rect/box on top of the phone bezel that's already baked into
+     the image. That double-box is what caused the earlier "device inside a device" look. ---------- */
+  .product-shot { filter: drop-shadow(0 30px 60px rgba(0,0,0,0.30)); width: 100%; height: auto; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding-top: clamp(120px, 18vh, 180px);
+  }
+  .hero-glow {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .hero-glow.is-visible { opacity: 1; }
+  .hero-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    transition: transform 1s cubic-bezier(.16,1,.3,1);
+    will-change: transform;
+  }
+  .hero-blob--pink {
+    width: 440px; height: 440px;
+    top: 380px; left: -8%;
+    background: var(--accent);
+    opacity: 0.20;
+  }
+  .hero-blob--blue {
+    width: 400px; height: 400px;
+    top: -60px; right: -8%;
+    background: #38BDF8;
+    opacity: 0.20;
+  }
+  @media (prefers-reduced-motion: reduce) { .hero-blob { transition: none; } }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 1000px;
+    margin: 0 auto;
+    gap: 20px;
+  }
+  .hero-content h1 { font-size: clamp(48px, 6.4vw, 76px); line-height: 0.9; font-weight: 400; color: #fff; }
+  /* Per-character reveal. Words stay inline-block so they never break mid-word
+     when the line wraps; each character carries its own staggered delay. */
+  .hero-word { display: inline-block; }
+  .hero-char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: hero-char-in 0.5s cubic-bezier(.2,.7,.3,1) forwards;
+  }
+  @keyframes hero-char-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-char { animation: none; opacity: 1; transform: none; }
+  }
+  .phone-stage { position: relative; width: 100%; height: 420vh; }
+  .phone-stage-inner {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .phone-frame {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 340px;
+    padding: 14px;
+    background: #111319;
+    border-radius: 46px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.30), inset 0 0 0 1px rgba(255,255,255,0.08);
+    /* Last beat of the hero intro: rises in once the subtitle has settled.
+       Delay is set inline in JS, chained off the headline's length. */
+    opacity: 0;
+    animation: phone-frame-in 1.5s cubic-bezier(.16, 1, .3, 1) forwards;
+  }
+  @keyframes phone-frame-in {
+    from { opacity: 0; transform: translateY(44px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .phone-frame { animation: none; opacity: 1; transform: none; }
+  }
+  .phone-screen {
+    width: 100%;
+    aspect-ratio: 375 / 812;
+    background: #fff;
+    border-radius: 10.667% / 4.926%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  .phone-statusbar { width: 100%; display: block; flex-shrink: 0; }
+  .phone-view-stack { position: relative; flex: 1; width: 100%; overflow: hidden; }
+  .phone-view { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; }
+  .phone-view--payment { opacity: 1; }
+  .phone-view--placed { opacity: 0; pointer-events: none; }
+  .phone-screen-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6% 8% 0;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+  .phone-screen-header svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .phone-screen-header span { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--ink); }
+  .phone-nfc-spacer {
+    width: 75%;
+    aspect-ratio: 1;
+    margin-top: 14%;
+    flex-shrink: 0;
+    visibility: hidden;
+  }
+  .confirm-icon-stage {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    will-change: top, left, width, height;
+  }
+  .phone-progress-ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); transition: opacity 0.25s ease; }
+  .ring-track { fill: none; stroke: #EEF1F5; stroke-width: 4; }
+  .ring-fill { fill: none; stroke: #1DB954; stroke-width: 4; stroke-linecap: round; }
+  /* The NFC mark and the check share the same spot, so they hand off rather than
+     cross-fade. Coming back (scrolling up) the NFC waits for the check to finish
+     retracting; the approved rules below flip the delays for the other direction. */
+  .phone-nfc-icon { width: 40%; position: relative; z-index: 1; transition: opacity 0.25s ease 0.35s; }
+  .phone-check-icon { position: absolute; width: 60%; height: 60%; }
+  .check-path { stroke-dasharray: 12; stroke-dashoffset: 12; transition: stroke-dashoffset 0.35s ease; }
+  .phone-status-text-wrap { position: relative; width: 100%; text-align: center; margin-top: 6%; height: 16px; flex-shrink: 0; }
+  .phone-status-text {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .phone-status-text--approved { color: #1DB954; }
+  .phone-amount { font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--ink); margin: 25% 0 0; }
+  .phone-cancel-btn {
+    margin: auto auto 10%;
+    width: 84%;
+    padding: 3.2% 0;
+    border: 1px solid var(--border-light);
+    border-radius: 999px;
+    background: none;
+    color: var(--accent);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: -0.01em;
+    cursor: default;
+  }
+  .phone-screen-header--placed { justify-content: flex-end; padding: 6% 8% 0; }
+  .placed-check-slot { width: 20%; aspect-ratio: 1; margin-top: 6%; flex-shrink: 0; visibility: hidden; }
+  .placed-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--ink); margin: 3% 0 0; text-align: center; padding: 0 6%; }
+  .placed-order-label { font-family: var(--font-body); font-size: 11px; color: var(--ink-secondary); margin: 2% 0 0; }
+  .placed-order-value { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--ink); margin: 2px 0 0; }
+  .placed-divider { width: 84%; height: 1px; background: var(--border-light); margin: 6% 0; flex-shrink: 0; }
+  .placed-item { width: 84%; display: flex; align-items: flex-start; gap: 10px; }
+  .placed-payment { width: 84%; display: flex; align-items: center; gap: 10px; }
+  .placed-item-count { width: 84%; font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--ink); margin: 0 0 3%; }
+  .placed-item-thumb {
+    position: relative;
+    width: 20%;
+    aspect-ratio: 1;
+    background: #F5F5F7;
+    border-radius: 8px;
+    overflow: visible;
+    flex-shrink: 0;
+  }
+  .placed-item-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block; }
+  .placed-item-qty {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #2E6BE6;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 9px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+  }
+  .placed-item-info { flex: 1; min-width: 0; }
+  .placed-item-name { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--ink); margin: 0; }
+  .placed-item-desc { font-family: var(--font-body); font-size: 10.5px; color: var(--ink-secondary); margin: 3px 0 0; white-space: pre-line; line-height: 1.4; }
+  .placed-item-price { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--ink); margin: 6px 0 0; text-align: left; }
+  .placed-personal, .placed-delivery { width: 84%; }
+  .placed-section-label { font-family: var(--font-body); font-size: 11px; color: var(--ink-secondary); margin: 0; }
+  .placed-customer-name { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--ink); margin: 2% 0 0; }
+  .placed-customer-email { font-family: var(--font-body); font-size: 10.5px; color: var(--ink-secondary); margin: 3px 0 0; line-height: 1.4; }
+  .placed-delivery-line { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--ink); margin: 2% 0 0; }
+  .placed-delivery-address { font-family: var(--font-body); font-size: 10.5px; color: var(--ink-secondary); margin: 2% 0 0; line-height: 1.4; white-space: pre-line; }
+  .placed-card-icon { width: 15%; flex-shrink: 0; }
+  .placed-card-icon img { width: 100%; display: block; }
+  .placed-payment p { font-family: var(--font-body); font-size: 12px; color: var(--ink); margin: 0; }
+  .phone-screen[data-state="hold"] .phone-status-text[data-phase="hold"],
+  .phone-screen[data-state="processing1"] .phone-status-text[data-phase="processing1"],
+  .phone-screen[data-state="processing2"] .phone-status-text[data-phase="processing2"],
+  .phone-screen[data-state="processing3"] .phone-status-text[data-phase="processing3"],
+  .phone-screen[data-state="approved"] .phone-status-text[data-phase="approved"] { opacity: 1; }
+  /* Going in: the NFC leaves at once, the check draws only after it has cleared. */
+  .phone-screen[data-state="approved"] .phone-nfc-icon { opacity: 0; transition-delay: 0s; }
+  .phone-screen[data-state="approved"] .check-path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.4s ease 0.25s;
+  }
+  .hero-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    margin-top: -126px;
+    margin-left: -200px;
+    z-index: 1;
+    opacity: 0;
+    transform: translate(390px, 170px);
+    filter: drop-shadow(0 25px 45px rgba(0,0,0,0.35));
+  }
+  .hero-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform: perspective(700px) rotateX(0deg) rotateY(0deg) scale(1);
+    transition: transform 0.4s cubic-bezier(.2,.8,.2,1);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .hero-card-img { display: block; width: 100%; height: 100%; }
+  .hero-card-shine {
+    position: absolute;
+    inset: 0;
+    border-radius: 3%;
+    overflow: hidden;
+    background: radial-gradient(circle at var(--shine-x, 50%) var(--shine-y, 50%), rgba(255,255,255,0.35), transparent 60%);
+    mix-blend-mode: soft-light;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .phone-stage { height: auto; }
+    .phone-stage-inner { position: relative; height: auto; }
+    .hero-card { position: relative; top: auto; left: auto; margin: 24px 0 0; opacity: 1; transform: none; }
+    .hero-card-inner { transition: none; }
+  }
+
+  /* ---------- Benefit cards (3 pilares) — progress cards ---------- */
+  .progress-cards {
+    display: flex;
+    align-items: stretch;
+    margin-top: 48px;
+    border-top: 1px solid var(--border-light);
+  }
+  .progress-card {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    border-right: 1px solid var(--border-light);
+    padding: 28px 28px 32px;
+    cursor: pointer;
+    position: relative;
+    letter-spacing: -0.03em;
+    transition: flex-grow 0.5s cubic-bezier(.2,.8,.2,1);
+  }
+  .progress-card:last-child { border-right: none; }
+  .progress-card.is-active { flex-grow: 2; }
+  .progress-card-rail {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    width: 2px;
+    height: calc(100% - 60px);
+    background: var(--border-light);
+  }
+  .progress-card-fill {
+    display: block;
+    width: 100%;
+    height: 0%;
+    background: var(--accent);
+  }
+  .progress-card.is-active .progress-card-fill {
+    animation: progress-card-fill var(--progress-duration, 5s) linear forwards;
+  }
+  @keyframes progress-card-fill {
+    from { height: 0%; }
+    to { height: 100%; }
+  }
+  .progress-card-num {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--accent);
+    opacity: 0.5;
+    transition: opacity 0.4s ease;
+  }
+  .progress-card.is-active .progress-card-num { opacity: 1; }
+  .progress-card h3 {
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--ink);
+    opacity: 0.55;
+    transition: opacity 0.4s ease;
+  }
+  .progress-card.is-active h3 { opacity: 1; }
+  /* The detail must never be open at the same time as a narrow column, or the
+     card carries a 2-line title AND its body at once — taller than any settled
+     state, which is what made the page jump. So: collapse quickly on the way
+     out, and hold off opening until the column has finished widening. */
+  .progress-card-detail {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0s, opacity 0.18s ease;
+  }
+  .progress-card.is-active .progress-card-detail {
+    max-height: 220px;
+    opacity: 1;
+    transition: max-height 0.35s ease 0.38s, opacity 0.3s ease 0.38s;
+  }
+  /* Pinned to the width the column ends up at, so the copy keeps its final
+     line breaks while the column animates. Left to reflow it would wrap over
+     many more lines at the narrow end of the animation, spiking the row height
+     mid-transition and shoving the rest of the page down. The detail clips the
+     overhang until the column catches up. */
+  .progress-card-detail p {
+    font-size: 15px;
+    color: var(--ink-secondary);
+    margin-top: 2px;
+    width: var(--detail-w, auto);
+  }
+  /* Height probe: snap every state instantly so the staggered transitions above
+     cannot skew the reads. Must outrank the .is-active detail rule, hence the
+     matching .is-active in the selector. */
+  .progress-cards.is-measuring .progress-card,
+  .progress-cards.is-measuring .progress-card-detail,
+  .progress-cards.is-measuring .progress-card.is-active .progress-card-detail { transition: none; }
+  .progress-cards.is-measuring .progress-card-fill { animation: none; }
+  @media (max-width: 860px), (prefers-reduced-motion: reduce) {
+    .progress-cards { flex-direction: column; border-top: none; }
+    .progress-card {
+      flex-grow: 1 !important;
+      border-right: none;
+      border-bottom: 1px solid var(--border-light);
+      padding: 24px 0;
+      cursor: default;
+    }
+    .progress-card:last-child { border-bottom: none; }
+    .progress-card-rail { display: none; }
+    .progress-card-num, .progress-card h3 { opacity: 1; }
+    .progress-card-detail, .progress-card-detail p { max-height: none; opacity: 1; }
+    .progress-card-detail p { width: auto; }
+  }
+  .icon-box {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--icon-bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .icon-box svg { width: 24px; height: 24px; }
+  .card-dark h3 { font-size: 19px; color: #fff; }
+  .card-dark p { font-size: 15px; color: var(--ink-secondary-on-dark); }
+
+  /* ---------- Use-case deck (contextos de uso) ---------- */
+  .deck { margin-top: 44px; }
+  .deck-stage {
+    position: relative;
+    height: 340px;
+    perspective: 1400px;
+    touch-action: pan-y;
+    outline: none;
+  }
+  .deck-stage:focus-visible { outline: 2px solid var(--accent); outline-offset: 8px; border-radius: 24px; }
+  .deck-card {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: min(420px, 82vw);
+    min-height: 300px;
+    margin-left: calc(min(420px, 82vw) / -2);
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: 22px;
+    padding: 28px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 26px 50px rgba(0,0,0,0.34);
+    cursor: grab;
+    user-select: none;
+    transform: translate3d(calc(var(--tx, 0px) + var(--dx, 0px)), var(--ty, 0px), 0) rotate(var(--rot, 0deg)) scale(var(--sc, 1));
+    opacity: var(--op, 1);
+    z-index: var(--z, 1);
+    transition: transform 0.55s cubic-bezier(.2,.8,.2,1), opacity 0.4s ease;
+  }
+  .deck-stage.is-dragging .deck-card { transition: none; }
+  .deck-stage.is-dragging .deck-card[data-slot="0"] { cursor: grabbing; }
+  .deck-card-step {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+  }
+  .deck-card-total { color: var(--ink-secondary); opacity: 0.6; }
+  .deck-card .icon-box { background: var(--dark-1); margin-top: 20px; }
+  .deck-card h3 { font-size: 20px; font-weight: 500; letter-spacing: -0.03em; color: var(--ink); }
+  .deck-card p { font-size: 15px; letter-spacing: -0.03em; color: var(--ink-secondary); }
+  .deck-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 28px;
+  }
+  .deck-arrow {
+    width: 40px; height: 40px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: none;
+    border: 1px solid rgba(255,255,255,0.22);
+    color: rgba(255,255,255,0.75);
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .deck-arrow svg { width: 18px; height: 18px; }
+  .deck-arrow:hover { border-color: var(--accent); }
+  .deck-dots { display: flex; align-items: center; gap: 8px; }
+  .deck-dot {
+    width: 7px; height: 7px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.28);
+    cursor: pointer;
+    transition: width 0.3s ease, background 0.3s ease;
+  }
+  .deck-dot.is-active { width: 22px; background: var(--accent); }
+  @media (max-width: 860px), (prefers-reduced-motion: reduce) {
+    .deck-stage {
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      perspective: none;
+    }
+    .deck-card {
+      position: static;
+      width: auto;
+      min-height: 0;
+      margin-left: 0;
+      transform: none;
+      opacity: 1;
+      cursor: default;
+      transition: none;
+    }
+    .deck-nav { display: none; }
+  }
+
+  /* ---------- Prova / demonstração ---------- */
+  .demo-frame {
+    position: relative;
+    max-width: 880px;
+    margin: 36px auto 0;
+    aspect-ratio: 16 / 9;
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 30px 60px rgba(20, 32, 50, 0.22);
+  }
+  .demo-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Overscaled so the blur never bleeds soft transparent edges into the frame. */
+    filter: blur(16px);
+    transform: scale(1.12);
+  }
+  .demo-scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(20, 32, 50, 0.42), rgba(20, 32, 50, 0.66));
+  }
+  .demo-play {
+    position: relative;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--ink);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+  }
+  .demo-play:hover { background: #fff; opacity: 1; }
+  @media (max-width: 640px) {
+    .demo-frame { border-radius: 16px; margin-top: 28px; }
+  }
+
+  /* ---------- FAQ accordion ---------- */
+  .faq-list { max-width: 720px; margin: 40px auto 0; text-align: left; border-bottom: 1px solid var(--border-light); }
+  .faq-item { border-top: 1px solid var(--border-light); }
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 20px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .faq-icon {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--border-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-secondary);
+    transition: transform 0.3s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .faq-icon svg { display: block; width: 18px; height: 18px; }
+  .faq-q:hover .faq-icon { border-color: var(--accent); color: var(--accent); }
+  .faq-item.open .faq-icon { transform: rotate(180deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .faq-a > div { padding: 0 0px 20px; }
+  .faq-a p { font-size: 15px; color: var(--ink-secondary); }
+  .faq-a a { color: var(--accent); text-decoration: underline; }
+  .faq-a p + p { margin-top: 10px; }
+  .faq-item.open .faq-a { max-height: 500px; }
+
+  /* ---------- Footer / CTA final ---------- */
+  .footer-note { font-size: 12px; color: var(--ink-secondary-on-dark); margin-top: 24px; max-width: 520px; margin-left: auto; margin-right: auto; }
+
+  @media (max-width: 640px) {
+    .section-pad { padding: 48px 20px; }
+    .nav, .nav.is-scrolled { padding: 12px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-brand">
+    <img class="nav-logo--white" src="assets/logo-vtex-white.svg" alt="VTEX Sales App">
+    <img class="nav-logo--pink" src="assets/logo-vtex-pink.svg" alt="" aria-hidden="true">
+  </div>
+  <div class="nav-actions">
+    <div class="lang-toggle-wrap">
+      <button id="langToggle" class="lang-toggle" type="button" aria-describedby="langTooltip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+        <span id="langToggleLabel">EN</span>
+      </button>
+      <span id="langTooltip" class="lang-tooltip" role="tooltip">Change to English</span>
+    </div>
+    <a class="btn btn--primary" href="https://docs.google.com/document/d/1V8-4C50OIVXzvdPHAJ_K3aHssA6btxANK--AzDZlLIk/edit?tab=t.0#heading=h.3sagm1xdtjfy" target="_blank" rel="noopener noreferrer">
+      <span data-i18n="cta.activate">Quero ativar</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+    </a>
+  </div>
+</nav>
+
+<!-- 1. HERO -->
+<section class="section--dark hero section-pad" id="hero">
+  <div class="hero-glow" aria-hidden="true">
+    <span class="hero-blob hero-blob--pink"></span>
+    <span class="hero-blob hero-blob--blue"></span>
+  </div>
+  <div class="container">
+    <div class="hero-content">
+      <h1 data-i18n-html="hero.title">O fim dos caixas.<br>O fim das filas.</h1>
+      <p class="subtext" data-i18n="hero.subtitle">Com o Sales App, cada vendedor vende, cobra e libera o cliente em qualquer canto da loja, apenas com um celular.</p>
+    </div>
+    <div class="phone-stage" id="phoneStage">
+      <div class="phone-stage-inner">
+        <div class="phone-frame">
+          <div class="phone-screen" id="phoneScreen" data-state="hold">
+            <img class="phone-statusbar" src="assets/status-bar.svg" alt="">
+            <div class="phone-view-stack">
+              <div class="phone-view phone-view--payment" id="phoneViewPayment">
+                <div class="phone-screen-header">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#142032" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                  <span>Tap on Phone</span>
+                </div>
+                <div class="phone-nfc-spacer" id="nfcSpacer"></div>
+                <div class="phone-status-text-wrap">
+                  <p class="phone-status-text" data-phase="hold" data-i18n="hero.phone.hold">Hold here to pay</p>
+                  <p class="phone-status-text" data-phase="processing1" data-i18n="hero.phone.processing1">Just a moment…</p>
+                  <p class="phone-status-text" data-phase="processing2" data-i18n="hero.phone.processing2">Reading the card…</p>
+                  <p class="phone-status-text" data-phase="processing3" data-i18n="hero.phone.processing3">Finishing up…</p>
+                  <p class="phone-status-text phone-status-text--approved" data-phase="approved" data-i18n="hero.phone.approved">Payment approved!</p>
+                </div>
+                <p class="phone-amount" data-i18n="hero.phone.amount">$69.90</p>
+                <button class="phone-cancel-btn" type="button" data-i18n="hero.phone.cancel">Cancel</button>
+              </div>
+              <div class="phone-view phone-view--placed" id="phoneViewPlaced">
+                <div class="phone-screen-header phone-screen-header--placed">
+                  <svg class="placed-close" viewBox="0 0 24 24" fill="none" stroke="#142032" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </div>
+                <div class="placed-check-slot" id="placedCheckSlot"></div>
+                <h3 class="placed-title" data-i18n="hero.phone.placedTitle">Order confirmed</h3>
+                <p class="placed-order-label" data-i18n="hero.phone.orderNumberLabel">Order number</p>
+                <p class="placed-order-value">2315340993608-1</p>
+                <div class="placed-divider"></div>
+                <p class="placed-item-count" data-i18n="hero.phone.itemCount">1 item</p>
+                <div class="placed-item">
+                  <div class="placed-item-thumb">
+                    <img src="assets/product-image.png" alt="">
+                    <span class="placed-item-qty">1</span>
+                  </div>
+                  <div class="placed-item-info">
+                    <p class="placed-item-name" data-i18n="hero.phone.itemName">Combined sweater</p>
+                    <p class="placed-item-desc" data-i18n="hero.phone.itemDesc">Color: Light beige
+Size: L</p>
+                    <p class="placed-item-price" data-i18n="hero.phone.amount">$69.90</p>
+                  </div>
+                </div>
+                <div class="placed-divider"></div>
+                <div class="placed-personal">
+                  <p class="placed-section-label" data-i18n="hero.phone.personalInfoLabel">Personal information</p>
+                  <p class="placed-customer-name">Ana Souza</p>
+                  <p class="placed-customer-email">ana.souza@email.com</p>
+                </div>
+                <div class="placed-divider"></div>
+                <div class="placed-delivery">
+                  <p class="placed-section-label" data-i18n="hero.phone.deliveryLabel">Delivery</p>
+                  <p class="placed-delivery-line" data-i18n="hero.phone.deliveryEstimate">Get it by Mon, Nov 10</p>
+                  <p class="placed-delivery-address" data-i18n="hero.phone.deliveryAddress">Ana Souza
+128 Flower Street
+Los Angeles, CA 90012</p>
+                </div>
+                <div class="placed-divider"></div>
+                <div class="placed-payment">
+                  <div class="placed-card-icon"><img src="assets/master.svg" alt=""></div>
+                  <p data-i18n="hero.phone.paymentMethod">Credit card •••• 2999</p>
+                </div>
+              </div>
+              <div class="confirm-icon-stage" id="confirmIconStage">
+                <svg class="phone-progress-ring" viewBox="0 0 160 160">
+                  <circle class="ring-track" cx="80" cy="80" r="70"/>
+                  <circle class="ring-fill" id="ringFill" cx="80" cy="80" r="70"/>
+                </svg>
+                <img class="phone-nfc-icon" src="assets/nfc-icon.svg" alt="">
+                <svg class="phone-check-icon" id="checkIcon" viewBox="0 0 24 24" fill="none" stroke="#1DB954" stroke-width="1.1"><path class="check-path" d="M8 12.5l2.5 2.5L16 9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="heroCard" class="hero-card" aria-hidden="true">
+          <div class="hero-card-inner" id="heroCardInner">
+            <img class="hero-card-img" src="assets/card.svg" alt="">
+            <span class="hero-card-shine" id="heroCardShine"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. BENEFÍCIOS (3 PILARES) -->
+<section class="section--light section-pad">
+  <div class="container" style="text-align:center;">
+    <h2 class="section-title reveal" data-i18n="benefits.title">Por que Tap on Phone</h2>
+    <p class="subtext subtext--wide reveal" style="margin:14px auto 0;" data-i18n="benefits.subtitle">Três motivos para transformar o celular que sua equipe já usa no seu novo ponto de venda.</p>
+    <div class="progress-cards reveal" id="progressCards">
+      <button type="button" class="progress-card is-active" data-index="0">
+        <span class="progress-card-rail"><span class="progress-card-fill"></span></span>
+        <span class="progress-card-num">01</span>
+        <h3 data-i18n="benefits.card1.title">Venda em qualquer lugar</h3>
+        <div class="progress-card-detail">
+          <p data-i18n="benefits.card1.desc">Venda, receba por aproximação e imprima o comprovante com a NF. O fluxo de vendas completo sem ir até o caixa.</p>
+        </div>
+      </button>
+      <button type="button" class="progress-card" data-index="1">
+        <span class="progress-card-rail"><span class="progress-card-fill"></span></span>
+        <span class="progress-card-num">02</span>
+        <h3 data-i18n="benefits.card2.title">Expanda sua operação em dias</h3>
+        <div class="progress-card-detail">
+          <p data-i18n="benefits.card2.desc">Ative o Tap on Phone para todas as lojas de uma vez, sem depender do ciclo de compra e distribuição de maquininhas.</p>
+        </div>
+      </button>
+      <button type="button" class="progress-card" data-index="2">
+        <span class="progress-card-rail"><span class="progress-card-fill"></span></span>
+        <span class="progress-card-num">03</span>
+        <h3 data-i18n="benefits.card3.title">Não perca vendas</h3>
+        <div class="progress-card-detail">
+          <p data-i18n="benefits.card3.desc">Integrado ao Sales App e à Cielo, continue recebendo pagamentos pelo Tap on Phone, mesmo se a VTEX estiver fora do ar.</p>
+        </div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- 3. CONTEXTOS DE USO -->
+<section class="section--dark section-pad">
+  <div class="container" style="text-align:center;">
+    <h2 class="section-title reveal" data-i18n="usecases.title">Onde ele entra na sua operação</h2>
+    <p class="subtext subtext--wide reveal" style="margin:14px auto 0;" data-i18n="usecases.subtitle">Do dia a dia do salão aos picos sazonais e às ativações fora da loja.</p>
+    <div class="deck reveal" id="useDeck">
+      <div class="deck-stage" id="useDeckStage" role="group" aria-roledescription="carrossel" aria-label="Contextos de uso" tabindex="0">
+        <article class="deck-card" data-index="0">
+          <span class="deck-card-step">01<span class="deck-card-total">/04</span></span>
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/></svg>
+          </div>
+          <h3 data-i18n="usecases.card1.title">Venda assistida no salão da loja própria</h3>
+          <p data-i18n="usecases.card1.desc">O vendedor fecha a venda onde o cliente está, sem levá-lo ao caixa.</p>
+        </article>
+        <article class="deck-card" data-index="1">
+          <span class="deck-card-step">02<span class="deck-card-total">/04</span></span>
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="m9 15 2 2 4-4"/></svg>
+          </div>
+          <h3 data-i18n="usecases.card2.title">Picos sazonais</h3>
+          <p data-i18n="usecases.card2.desc">Black Friday e datas comemorativas, escalando pontos de venda sem comprar equipamento extra.</p>
+        </article>
+        <article class="deck-card" data-index="2">
+          <span class="deck-card-step">03<span class="deck-card-total">/04</span></span>
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/><path d="M8 6v8"/></svg>
+          </div>
+          <h3 data-i18n="usecases.card3.title">Ativações de marca em eventos</h3>
+          <p data-i18n="usecases.card3.desc">Estandes e eventos organizados pela própria rede de lojas.</p>
+        </article>
+        <article class="deck-card" data-index="3">
+          <span class="deck-card-step">04<span class="deck-card-total">/04</span></span>
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+          </div>
+          <h3 data-i18n="usecases.card4.title">Expansão de pontos de atendimento</h3>
+          <p data-i18n="usecases.card4.desc">Novos pontos dentro da rede própria, sem esperar o ciclo de compra de hardware.</p>
+        </article>
+      </div>
+      <div class="deck-nav">
+        <button type="button" class="deck-arrow" data-dir="-1" aria-label="Anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="deck-dots" id="useDeckDots"></div>
+        <button type="button" class="deck-arrow" data-dir="1" aria-label="Próximo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. PROVA / DEMONSTRAÇÃO -->
+<section class="section--light section-pad">
+  <div class="container" style="text-align:center;">
+    <h2 class="section-title reveal" data-i18n="proof.title">Veja funcionando</h2>
+    <p class="subtext subtext--roomy reveal" style="margin:14px auto 0;" data-i18n="proof.subtitle">Veja o Tap on Phone funcionando dentro do Sales App — do checkout à confirmação, sem sair do fluxo que sua equipe já usa.</p>
+    <div class="demo-frame reveal" id="demoFrame">
+      <video class="demo-video" id="demoVideo" src="assets/TapOnPhoneDemo.mp4"
+             muted loop playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
+      <span class="demo-scrim" aria-hidden="true"></span>
+      <a class="btn demo-play" href="https://drive.google.com/file/d/1LtfRjt7RJLccBQx68ejma2tJ5N7UTZUJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"/><circle cx="12" cy="12" r="10"/></svg>
+        <span data-i18n="proof.cta">Ver demo</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 5. FAQ -->
+<section class="section--light section-pad">
+  <div class="container" style="text-align:center;">
+    <h2 class="section-title reveal" data-i18n="faq.title">Perguntas frequentes</h2>
+    <p class="subtext reveal" style="margin:14px auto 0;" data-i18n="faq.subtitle">O que as equipes de operação e tecnologia costumam perguntar antes de ativar.</p>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false"><span data-i18n="faq.q1">Como ativo em minha loja?</span><span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+        <div class="faq-a"><div data-i18n-html="faq.a1"><p>Para ativar o Tap on Phone, é necessário instalar e configurar o VTEX Sales App e contratar a Cielo, informando que vai usar o Tap on Phone em conjunto com o Sales App. As etapas completas de contratação estão na <a href="https://docs.google.com/document/d/1V8-4C50OIVXzvdPHAJ_K3aHssA6btxANK--AzDZlLIk/edit?tab=t.0#heading=h.3sagm1xdtjfy" target="_blank" rel="noopener noreferrer">documentação</a> (em breve, pública). Fale com seu CE da VTEX para garantir o suporte correto durante a ativação.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false"><span data-i18n="faq.q2">Como funciona?</span><span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+        <div class="faq-a"><div data-i18n-html="faq.a2">
+          <p>Depois de ativado, o Tap on Phone aparece como mais um meio de pagamento dentro do fluxo de checkout do Sales App — não é um app à parte.</p>
+          <p>No checkout, selecione "Tap on phone crédito" ou "Tap on phone débito" como meio de pagamento e a quantidade de parcelas; a tela de aproximação carrega automaticamente; peça para o cliente aproximar o cartão; aguarde o processamento.</p>
+          <p>Com o pagamento aprovado, o comprovante é gerado na hora e pode ser compartilhado direto com o cliente ou impresso.</p>
+          <p>Ao iniciar uma nova venda, a tela de pedido concluído confirma que está tudo certo antes de seguir.</p>
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false"><span data-i18n="faq.q3">Em quais dispositivos funciona?</span><span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+        <div class="faq-a"><div data-i18n-html="faq.a3"><p>O Tap on Phone funciona em smartphones Android com versão 12 ou superior e suporte a NFC (tecnologia de aproximação) — é essa combinação que permite transformar o celular em um terminal de pagamento. A maioria dos aparelhos Android intermediários e avançados já atende a esse requisito, como Samsung Galaxy A06, Samsung Galaxy A15, Motorola Moto G84, Xiaomi Redmi Note 13, Android 13, POCO X6 e tablets.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false"><span data-i18n="faq.q4">Qual adquirente é usado?</span><span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+        <div class="faq-a"><div data-i18n-html="faq.a4"><p>A adquirência é feita pela Cielo, com taxas e contratação diretamente com a adquirente. Isso significa que a contratação do Tap on Phone depende de um contrato com a Cielo, além da configuração no Sales App — não é possível usar outra adquirente nesta fase.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false"><span data-i18n="faq.q5">Posso parcelar as vendas?</span><span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+        <div class="faq-a"><div data-i18n-html="faq.a5"><p>Sim, é possível parcelar em até 12x, de acordo com as suas regras de negócio. A configuração do parcelamento é feita pela VTEX diretamente no provedor de pagamento, mediante abertura de um ticket específico para configurar o Tap on Phone — não é uma configuração self-service.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false"><span data-i18n="faq.q6">Preciso comprar algum equipamento?</span><span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+        <div class="faq-a"><div data-i18n-html="faq.a6"><p>Não. O próprio smartphone Android do seu time já funciona como terminal de pagamento — não há necessidade de comprar, homologar ou distribuir nenhum equipamento adicional. É isso que permite escalar a operação em poucos dias em vez de meses.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false"><span data-i18n="faq.q7">Quanto custa?</span><span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+        <div class="faq-a"><div data-i18n-html="faq.a7"><p>As taxas são negociadas e contratadas diretamente com a Cielo. A solução é disponibilizada com a solução de Sales App sem custo adicional.</p></div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false"><span data-i18n="faq.q8">Funciona em qualquer operação?</span><span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+        <div class="faq-a"><div data-i18n-html="faq.a8">
+          <p>Hoje funciona direto, sem ação manual, para venda no débito, crédito à vista e parcelado, em lojas próprias com CNPJ único, usando Android 12+ e adquirência Cielo.</p>
+          <p>Três pontos dependem de ação manual: parcelamento (configuração feita pela VTEX no momento da ativação via ticket), cancelamento de venda (feito pelo portal Cielo Conecta, não integrado ao Sales App) e o recomendável de manter outro meio de pagamento como fallback.</p>
+          <p>Ainda não é possível: split payment, restringir bandeiras aceitas, e atender franquias ou redes com múltiplos CNPJs.</p>
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false"><span data-i18n="faq.q9">Tem documentação?</span><span class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span></button>
+        <div class="faq-a"><div data-i18n-html="faq.a9"><p>Sim — a documentação está disponível <a href="https://docs.google.com/document/d/1V8-4C50OIVXzvdPHAJ_K3aHssA6btxANK--AzDZlLIk/edit?tab=t.0#heading=h.3sagm1xdtjfy" target="_blank" rel="noopener noreferrer">neste documento</a>. A versão pública ainda está em breve.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. CTA FINAL / FOOTER -->
+<footer class="section--dark section-pad" style="text-align:center; padding-bottom:56px;">
+  <div class="container reveal" style="display:flex; flex-direction:column; align-items:center; gap:20px;">
+    <h2 class="section-title" style="font-size:clamp(26px,3.4vw,36px);" data-i18n="footer.title">Pronto para escalar sua operação?</h2>
+    <p class="subtext" style="margin:-8px auto 0;" data-i18n="footer.subtitle">Ative o Tap on Phone nas suas lojas com o apoio do seu CE da VTEX.</p>
+    <a class="btn btn--primary" href="https://docs.google.com/document/d/1V8-4C50OIVXzvdPHAJ_K3aHssA6btxANK--AzDZlLIk/edit?tab=t.0#heading=h.3sagm1xdtjfy" target="_blank" rel="noopener noreferrer">
+      <span data-i18n="cta.activate">Quero ativar</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+    </a>
+    <p class="scope-note" data-i18n="footer.scope">Disponível no Brasil, para smartphones Android 12+.</p>
+    <p class="footer-note" data-i18n="footer.note">Ativação sujeita a contrato e homologação junto a Cielo e VTEX.</p>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  const heroSectionEl = document.getElementById('hero');
+  // The nav stays fully transparent for the whole hero — its dark artwork already
+  // separates the nav from the page — and only picks up the backdrop once the
+  // hero has scrolled out from under it.
+  const themedBlocks = Array.from(document.querySelectorAll('section, footer'));
+  const onScroll = () => {
+    const pastHero = heroSectionEl
+      ? heroSectionEl.getBoundingClientRect().bottom <= nav.offsetHeight
+      : window.scrollY > 60;
+    nav.classList.toggle('is-scrolled', pastHero);
+
+    // Match the bar to whatever block sits behind it: probe the nav's midline
+    // and read that block's own light/dark class.
+    const probeY = nav.offsetHeight / 2;
+    const behind = themedBlocks.find((block) => {
+      const rect = block.getBoundingClientRect();
+      return rect.top <= probeY && rect.bottom > probeY;
+    });
+    if (behind) nav.classList.toggle('is-light', behind.classList.contains('section--light'));
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach((el) => io.observe(el));
+  } else {
+    revealEls.forEach((el) => el.classList.add('is-visible'));
+  }
+
+  // Assigned by the progress-cards block below; re-run after a language swap,
+  // since the translated copy changes how the titles wrap.
+  let relockProgressCards = null;
+
+  const progressCardsEl = document.getElementById('progressCards');
+  if (progressCardsEl) {
+    const cards = Array.from(progressCardsEl.querySelectorAll('.progress-card'));
+    const DURATION = 5000;
+    const isAutoplayDisabled = () => window.matchMedia('(max-width: 860px)').matches
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let activeIndex = 0;
+    let timerId = null;
+
+    const setActive = (index) => {
+      activeIndex = index;
+      cards.forEach((card, i) => card.classList.toggle('is-active', i === index));
+    };
+    const scheduleNext = () => {
+      clearTimeout(timerId);
+      if (isAutoplayDisabled()) return;
+      timerId = setTimeout(() => {
+        setActive((activeIndex + 1) % cards.length);
+        scheduleNext();
+      }, DURATION);
+    };
+    const goTo = (index) => {
+      if (isAutoplayDisabled()) return;
+      setActive(index);
+      scheduleNext();
+    };
+
+    // Keep the block a fixed height so stepping between cards never shoves the
+    // rest of the page around. Two parts: freeze the detail copy at its final
+    // column width (see --detail-w in the CSS) so it cannot rewrap mid-animation,
+    // then reserve the tallest of the settled states.
+    const lockHeight = () => {
+      progressCardsEl.style.minHeight = '';
+      progressCardsEl.style.removeProperty('--detail-w');
+      if (isAutoplayDisabled()) return;
+
+      const restore = activeIndex;
+      progressCardsEl.classList.add('is-measuring');
+
+      setActive(0);
+      const expanded = cards[0].querySelector('.progress-card-detail');
+      progressCardsEl.style.setProperty('--detail-w', `${expanded.clientWidth}px`);
+
+      let tallest = 0;
+      cards.forEach((_, i) => {
+        setActive(i);
+        tallest = Math.max(tallest, progressCardsEl.offsetHeight);
+      });
+
+      setActive(restore);
+      progressCardsEl.classList.remove('is-measuring');
+      progressCardsEl.style.minHeight = `${tallest}px`;
+    };
+    relockProgressCards = lockHeight;
+
+    progressCardsEl.style.setProperty('--progress-duration', `${DURATION}ms`);
+    cards.forEach((card) => {
+      card.addEventListener('click', () => goTo(Number(card.dataset.index)));
+    });
+    progressCardsEl.addEventListener('mouseenter', () => clearTimeout(timerId));
+    progressCardsEl.addEventListener('mouseleave', () => scheduleNext());
+    // Failsafe: a stray mouseenter with no matching mouseleave (e.g. the
+    // cursor already resting over the component when it scrolls into view)
+    // would otherwise pause the carousel forever. Any real mouse movement
+    // anywhere on the page re-checks hover state and self-heals.
+    document.addEventListener('mousemove', () => {
+      if (!timerId && !progressCardsEl.matches(':hover')) scheduleNext();
+    });
+    let relockTimer = null;
+    window.addEventListener('resize', () => {
+      scheduleNext();
+      clearTimeout(relockTimer);
+      relockTimer = setTimeout(lockHeight, 150);
+    });
+    lockHeight();
+    scheduleNext();
+  }
+
+  // ---------- Use-case deck (draggable card stack) ----------
+  const deckStageEl = document.getElementById('useDeckStage');
+  const deckDotsEl = document.getElementById('useDeckDots');
+  if (deckStageEl) {
+    const deckCards = Array.from(deckStageEl.querySelectorAll('.deck-card'));
+    const total = deckCards.length;
+    // Fan geometry per slot: 0 = front, 1 = right, 2 = back, 3 = left. `dir` is
+    // the side the card fans out to; the spread itself is computed per render so
+    // it can tighten when the viewport can't fit the full fan.
+    const SLOTS = [
+      { dir: 0,  ty: 0,  rot: 0,  sc: 1,    z: 40, op: 1 },
+      { dir: 1,  ty: 16, rot: 6,  sc: 0.9,  z: 30, op: 1 },
+      { dir: 0,  ty: 34, rot: 0,  sc: 0.8,  z: 20, op: 1 },
+      { dir: -1, ty: 16, rot: -6, sc: 0.9,  z: 30, op: 1 },
+    ];
+    const SPREAD_RATIO = 0.5;   // of the card's own width, when there is room
+    const EDGE_MARGIN = 28;     // breathing room kept against the viewport edge
+    const DRAG_THRESHOLD = 60;
+    let active = 0;
+
+    const isStatic = () => window.matchMedia('(max-width: 860px)').matches
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const render = () => {
+      // Pull the fan in when the viewport is too narrow for the full spread,
+      // so the back cards never run off the edge.
+      const cardWidth = deckCards[0].offsetWidth;
+      const roomToEdge = window.innerWidth / 2 - (cardWidth * 0.9) / 2 - EDGE_MARGIN;
+      const spread = Math.max(0, Math.min(SPREAD_RATIO * cardWidth, roomToEdge));
+
+      deckCards.forEach((card, i) => {
+        const slotIndex = (i - active + total) % total;
+        const s = SLOTS[slotIndex % SLOTS.length];
+        card.dataset.slot = String(slotIndex);
+        card.style.setProperty('--tx', `${s.dir * spread}px`);
+        card.style.setProperty('--ty', `${s.ty}px`);
+        card.style.setProperty('--rot', `${s.rot}deg`);
+        card.style.setProperty('--sc', String(s.sc));
+        card.style.setProperty('--z', String(s.z));
+        card.style.setProperty('--op', String(s.op));
+        card.setAttribute('aria-hidden', slotIndex === 0 ? 'false' : 'true');
+      });
+      Array.from(deckDotsEl.children).forEach((dot, i) => {
+        dot.classList.toggle('is-active', i === active);
+        dot.setAttribute('aria-current', i === active ? 'true' : 'false');
+      });
+    };
+    const goTo = (index) => {
+      active = (index + total) % total;
+      render();
+    };
+    const advance = (dir) => goTo(active + dir);
+
+    deckCards.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'deck-dot';
+      dot.setAttribute('aria-label', `Ir para o card ${i + 1}`);
+      dot.addEventListener('click', () => goTo(i));
+      deckDotsEl.appendChild(dot);
+    });
+    document.querySelectorAll('.deck-arrow').forEach((btn) => {
+      btn.addEventListener('click', () => advance(Number(btn.dataset.dir)));
+    });
+    deckStageEl.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); advance(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); advance(1); }
+    });
+
+    // Pointer drag: the whole fan follows the pointer, then settles.
+    let dragStartX = 0;
+    let dragging = false;
+    const onPointerDown = (e) => {
+      if (isStatic() || e.button === 1 || e.button === 2) return;
+      dragging = true;
+      dragStartX = e.clientX;
+      deckStageEl.classList.add('is-dragging');
+      deckStageEl.setPointerCapture(e.pointerId);
+    };
+    const onPointerMove = (e) => {
+      if (!dragging) return;
+      deckStageEl.style.setProperty('--dx', `${(e.clientX - dragStartX) * 0.7}px`);
+    };
+    const onPointerUp = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      const dx = e.clientX - dragStartX;
+      deckStageEl.classList.remove('is-dragging');
+      deckStageEl.style.setProperty('--dx', '0px');
+      if (Math.abs(dx) > DRAG_THRESHOLD) advance(dx < 0 ? 1 : -1);
+    };
+    deckStageEl.addEventListener('pointerdown', onPointerDown);
+    deckStageEl.addEventListener('pointermove', onPointerMove);
+    deckStageEl.addEventListener('pointerup', onPointerUp);
+    deckStageEl.addEventListener('pointercancel', onPointerUp);
+
+    // A click on a card behind the front one promotes it, but only when the
+    // pointer did not travel far enough to count as a drag.
+    deckCards.forEach((card, i) => {
+      card.addEventListener('click', (e) => {
+        if (isStatic()) return;
+        if (Math.abs(e.clientX - dragStartX) > 6) return;
+        if (card.dataset.slot !== '0') goTo(i);
+      });
+    });
+
+    // The spread depends on the viewport, so recompute it when that changes.
+    window.addEventListener('resize', render);
+    render();
+  }
+
+  // Demo backdrop: a 32 MB file, so it stays unfetched (preload="none") until the
+  // frame is actually on screen, and pauses again once it scrolls away.
+  const demoVideoEl = document.getElementById('demoVideo');
+  if (demoVideoEl && 'IntersectionObserver' in window
+      && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const demoIo = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) demoVideoEl.play().catch(() => {});
+        else demoVideoEl.pause();
+      });
+    }, { threshold: 0.25 });
+    demoIo.observe(demoVideoEl);
+  }
+
+  document.querySelectorAll('.faq-item').forEach((item) => {
+    const q = item.querySelector('.faq-q');
+    q.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      item.classList.toggle('open', !isOpen);
+      q.setAttribute('aria-expanded', String(!isOpen));
+    });
+  });
+
+  // ---------- Hero card: scroll-driven slide-in, tucks behind the phone, phone "processes" the payment, then hands off to the order-confirmed screen ----------
+  const phoneStageEl = document.getElementById('phoneStage');
+  const heroCardEl = document.getElementById('heroCard');
+  const phoneFrameEl = document.querySelector('.phone-frame');
+  const phoneScreenEl = document.getElementById('phoneScreen');
+  const ringFillEl = document.getElementById('ringFill');
+  const phoneViewPaymentEl = document.getElementById('phoneViewPayment');
+  const phoneViewPlacedEl = document.getElementById('phoneViewPlaced');
+  const placedCloseEl = document.querySelector('.placed-close');
+  const phoneViewStackEl = document.querySelector('.phone-view-stack');
+  const confirmIconStageEl = document.getElementById('confirmIconStage');
+  const nfcSpacerEl = document.getElementById('nfcSpacer');
+  const placedCheckSlotEl = document.getElementById('placedCheckSlot');
+  const ringTrackEl = document.querySelector('.ring-track');
+  const checkIconEl = document.getElementById('checkIcon');
+  const RING_CIRCUMFERENCE = 2 * Math.PI * 70;
+  if (ringFillEl) {
+    ringFillEl.style.strokeDasharray = String(RING_CIRCUMFERENCE);
+    ringFillEl.style.strokeDashoffset = String(RING_CIRCUMFERENCE);
+  }
+  if (phoneStageEl && heroCardEl && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const clamp01 = (v) => Math.max(0, Math.min(1, v));
+    const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+    const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+    let cardRafId = null;
+
+    const renderCard = () => {
+      const rect = phoneStageEl.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      const p = total > 0 ? clamp01(-rect.top / total) : 0;
+      const cardHalfWidth = 200;
+      const phoneHalfWidth = phoneFrameEl ? phoneFrameEl.getBoundingClientRect().width / 2 : 170;
+      // Gap between the phone's right edge and the card's left edge, and how high
+      // the card rides. The gap unwinds to 0 so the card ends up horizontally
+      // centred on the phone; the rise is held for the whole scroll.
+      const cardGap = 56;
+      const cardRise = -40;
+      const sideOffset = Math.min(470, phoneHalfWidth + cardHalfWidth + cardGap);
+      let tx, ty, opacity, z;
+      if (p < 0.09) {
+        const t = easeOut(p / 0.09);
+        tx = sideOffset; ty = lerp(170, cardRise, t); opacity = t; z = 3;
+      } else if (p < 0.15) {
+        tx = sideOffset; ty = cardRise; opacity = 1; z = 3;
+      } else if (p < 0.27) {
+        const t = easeInOut((p - 0.15) / 0.12);
+        tx = lerp(sideOffset, 0, t); ty = cardRise; opacity = 1; z = 1;
+      } else if (p < 0.62) {
+        tx = 0; ty = cardRise; opacity = 1; z = 1;
+      } else if (p < 0.74) {
+        const t = easeInOut((p - 0.62) / 0.12);
+        tx = 0; ty = lerp(cardRise, cardRise + 50, t); opacity = lerp(1, 0, t); z = 1;
+      } else {
+        tx = 0; ty = cardRise + 50; opacity = 0; z = 1;
+      }
+      heroCardEl.style.transform = `translate(${tx}px, ${ty}px)`;
+      heroCardEl.style.opacity = opacity;
+      heroCardEl.style.zIndex = z;
+
+      if (phoneScreenEl) {
+        const ringProgress = clamp01((p - 0.3) / (0.5 - 0.3));
+        let state;
+        if (p < 0.3) state = 'hold';
+        else if (p < 0.5) {
+          state = ringProgress < 0.33 ? 'processing1' : ringProgress < 0.66 ? 'processing2' : 'processing3';
+        } else state = 'approved';
+        if (phoneScreenEl.dataset.state !== state) phoneScreenEl.dataset.state = state;
+
+        if (ringFillEl) {
+          ringFillEl.style.strokeDashoffset = String(RING_CIRCUMFERENCE * (1 - ringProgress));
+        }
+        // Step 1 (0.62-0.74): the approved text/amount/cancel fade out while the check shrinks into place.
+        const iconT = clamp01((p - 0.62) / 0.12);
+        // Step 2 (0.74-0.86): once the check has settled, the order-confirmed screen fades + slides in.
+        const placedT = clamp01((p - 0.74) / 0.12);
+        if (phoneViewPaymentEl) phoneViewPaymentEl.style.opacity = String(lerp(1, 0, iconT));
+        if (phoneViewPlacedEl) {
+          const placedSlide = lerp(14, 0, placedT);
+          phoneViewPlacedEl.style.opacity = String(lerp(0, 1, placedT));
+          phoneViewPlacedEl.style.transform = `translateY(${placedSlide}px)`;
+          // The close icon rides the same container but should only fade, so it
+          // cancels out the slide and stays put at its final position.
+          if (placedCloseEl) placedCloseEl.style.transform = `translateY(${-placedSlide}px)`;
+        }
+        if (confirmIconStageEl && nfcSpacerEl && placedCheckSlotEl && phoneViewStackEl) {
+          const stackRect = phoneViewStackEl.getBoundingClientRect();
+          const bigRect = nfcSpacerEl.getBoundingClientRect();
+          const smallRect = placedCheckSlotEl.getBoundingClientRect();
+          const bigLeft = bigRect.left - stackRect.left;
+          const bigTop = bigRect.top - stackRect.top;
+          const smallLeft = smallRect.left - stackRect.left;
+          const smallTop = smallRect.top - stackRect.top;
+          confirmIconStageEl.style.left = lerp(bigLeft, smallLeft, iconT) + 'px';
+          confirmIconStageEl.style.top = lerp(bigTop, smallTop, iconT) + 'px';
+          confirmIconStageEl.style.width = lerp(bigRect.width, smallRect.width, iconT) + 'px';
+          confirmIconStageEl.style.height = lerp(bigRect.height, smallRect.height, iconT) + 'px';
+        }
+        const ringStrokeWidth = lerp(4, 7, iconT);
+        if (ringTrackEl) ringTrackEl.style.strokeWidth = String(ringStrokeWidth);
+        if (ringFillEl) ringFillEl.style.strokeWidth = String(ringStrokeWidth);
+        if (checkIconEl) checkIconEl.style.strokeWidth = String(lerp(1.1, 2, iconT));
+      }
+      cardRafId = null;
+    };
+    const onCardScroll = () => {
+      if (!cardRafId) cardRafId = requestAnimationFrame(renderCard);
+    };
+    window.addEventListener('scroll', onCardScroll, { passive: true });
+    window.addEventListener('resize', onCardScroll);
+    renderCard();
+  }
+
+  // ---------- Hero card: subtle "spatial depth" tilt that follows the cursor anywhere in the hero ----------
+  const heroSectionForCard = document.getElementById('hero');
+  const heroCardInnerEl = document.getElementById('heroCardInner');
+  const heroCardShineEl = document.getElementById('heroCardShine');
+  if (heroSectionForCard && heroCardEl && heroCardInnerEl && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const MAX_TILT = 7;
+    let tiltRafId = null;
+    let pendingTiltEvent = null;
+    const updateTilt = () => {
+      // Relative to the viewport (not just the card itself), so the card keeps
+      // reacting as the cursor moves anywhere in the hero, not only on hover.
+      const relX = pendingTiltEvent.clientX / window.innerWidth - 0.5;
+      const relY = pendingTiltEvent.clientY / window.innerHeight - 0.5;
+      heroCardInnerEl.style.transform = `perspective(700px) rotateX(${(-relY * MAX_TILT).toFixed(2)}deg) rotateY(${(relX * MAX_TILT).toFixed(2)}deg) scale(1.02)`;
+      if (heroCardShineEl) {
+        heroCardShineEl.style.setProperty('--shine-x', `${(relX + 0.5) * 100}%`);
+        heroCardShineEl.style.setProperty('--shine-y', `${(relY + 0.5) * 100}%`);
+        heroCardShineEl.style.opacity = '0.8';
+      }
+      tiltRafId = null;
+    };
+    heroSectionForCard.addEventListener('mousemove', (e) => {
+      pendingTiltEvent = e;
+      if (!tiltRafId) tiltRafId = requestAnimationFrame(updateTilt);
+    }, { passive: true });
+    heroSectionForCard.addEventListener('mouseleave', () => {
+      heroCardInnerEl.style.transform = 'perspective(700px) rotateX(0deg) rotateY(0deg) scale(1)';
+      if (heroCardShineEl) heroCardShineEl.style.opacity = '0';
+    });
+  }
+
+  // ---------- Hero glow: blobs drift subtly with scroll, and follow the cursor ----------
+  const heroSection = document.getElementById('hero');
+  const heroBlobs = document.querySelectorAll('.hero-blob');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (heroSection && heroBlobs.length && !prefersReducedMotion) {
+    const mouseDepths = [130, -155];
+    const scrollDepths = [-160, 130];
+    let mouseRelX = 0;
+    let mouseRelY = 0;
+    let scrollT = 0;
+    let blobRafId = null;
+
+    const applyBlobTransforms = () => {
+      heroBlobs.forEach((blob, i) => {
+        const mDepth = mouseDepths[i] || 20;
+        const sDepth = scrollDepths[i] || 20;
+        const tx = mouseRelX * mDepth;
+        const ty = mouseRelY * mDepth + scrollT * sDepth;
+        blob.style.transform = `translate(${tx}px, ${ty}px)`;
+      });
+      blobRafId = null;
+    };
+    const queueBlobUpdate = () => {
+      if (!blobRafId) blobRafId = requestAnimationFrame(applyBlobTransforms);
+    };
+    heroSection.addEventListener('mousemove', (e) => {
+      // Use the viewport (not the very tall hero section) as the reference,
+      // since the glow itself is fixed to the viewport — this keeps the
+      // parallax responsive on both axes regardless of scroll position.
+      mouseRelX = e.clientX / window.innerWidth - 0.5;
+      mouseRelY = e.clientY / window.innerHeight - 0.5;
+      queueBlobUpdate();
+    }, { passive: true });
+    heroSection.addEventListener('mouseleave', () => {
+      mouseRelX = 0;
+      mouseRelY = 0;
+      queueBlobUpdate();
+    });
+    window.addEventListener('scroll', () => {
+      const rect = heroSection.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      scrollT = total > 0 ? Math.max(0, Math.min(1, -rect.top / total)) : 0;
+      queueBlobUpdate();
+    }, { passive: true });
+  }
+
+  // ---------- Hero glow: fixed to the viewport, only shown while the hero is on screen ----------
+  const heroGlowEl = document.querySelector('.hero-glow');
+  if (heroSection && heroGlowEl) {
+    let glowRafId = null;
+    const updateGlowVisibility = () => {
+      const rect = heroSection.getBoundingClientRect();
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+      heroGlowEl.classList.toggle('is-visible', isVisible);
+      glowRafId = null;
+    };
+    const onGlowScroll = () => {
+      if (!glowRafId) glowRafId = requestAnimationFrame(updateGlowVisibility);
+    };
+    window.addEventListener('scroll', onGlowScroll, { passive: true });
+    window.addEventListener('resize', onGlowScroll);
+    updateGlowVisibility();
+  }
+
+  // ---------- i18n (PT/EN) ----------
+  const translations = {
+    pt: {
+      'cta.activate': 'Quero ativar',
+      'meta.description': 'A venda na mão do vendedor. O pedido, na VTEX. Com o Sales App, cada vendedor vende e cobra por aproximação direto do celular — sem fila, sem caixa fixo, e com o pedido certo na hora.',
+      'hero.title': 'O fim dos caixas.<br>O fim das filas.',
+      'hero.subtitle': 'Com o Sales App, cada vendedor vende, cobra e libera o cliente em qualquer canto da loja, apenas com um celular.',
+      'hero.phone.hold': 'Aproxime para pagar',
+      'hero.phone.processing1': 'Só um momento…',
+      'hero.phone.processing2': 'Lendo o cartão…',
+      'hero.phone.processing3': 'Finalizando a leitura…',
+      'hero.phone.approved': 'Pagamento aprovado!',
+      'hero.phone.cancel': 'Cancelar',
+      'hero.phone.amount': 'R$ 69,90',
+      'hero.phone.placedTitle': 'Pedido confirmado',
+      'hero.phone.orderNumberLabel': 'Número do pedido',
+      'hero.phone.itemCount': '1 item',
+      'hero.phone.itemName': 'Suéter combinado',
+      'hero.phone.itemDesc': 'Cor: Beige claro\nTamanho: G',
+      'hero.phone.personalInfoLabel': 'Informações pessoais',
+      'hero.phone.deliveryLabel': 'Entrega',
+      'hero.phone.deliveryEstimate': 'Receba até seg, 10 de nov',
+      'hero.phone.deliveryAddress': 'Ana Souza\nRua das Flores, 128\nSão Paulo, SP 01310-000',
+      'hero.phone.paymentMethod': '•••• 2999',
+      'benefits.title': 'Por que Tap on Phone',
+      'benefits.subtitle': 'Três motivos para transformar o celular que sua equipe já usa no seu novo ponto de venda.',
+      'benefits.card1.title': 'Venda em qualquer lugar',
+      'benefits.card1.desc': 'Venda, receba por aproximação e imprima o comprovante com a NF. O fluxo de vendas completo sem ir até o caixa.',
+      'benefits.card2.title': 'Expanda sua operação em dias',
+      'benefits.card2.desc': 'Ative o Tap on Phone para todas as lojas de uma vez, sem depender do ciclo de compra e distribuição de maquininhas.',
+      'benefits.card3.title': 'Não perca vendas',
+      'benefits.card3.desc': 'Integrado ao Sales App e à Cielo, continue recebendo pagamentos pelo Tap on Phone, mesmo se a VTEX estiver fora do ar.',
+      'usecases.title': 'Onde ele entra na sua operação',
+      'usecases.subtitle': 'Do dia a dia do salão aos picos sazonais e às ativações fora da loja.',
+      'usecases.card1.title': 'Venda assistida no salão da loja própria',
+      'usecases.card1.desc': 'O vendedor fecha a venda onde o cliente está, sem levá-lo ao caixa.',
+      'usecases.card2.title': 'Picos sazonais',
+      'usecases.card2.desc': 'Black Friday e datas comemorativas, escalando pontos de venda sem comprar equipamento extra.',
+      'usecases.card3.title': 'Ativações de marca em eventos',
+      'usecases.card3.desc': 'Estandes e eventos organizados pela própria rede de lojas.',
+      'usecases.card4.title': 'Expansão de pontos de atendimento',
+      'usecases.card4.desc': 'Novos pontos dentro da rede própria, sem esperar o ciclo de compra de hardware.',
+      'proof.title': 'Veja funcionando',
+      'proof.subtitle': 'Veja o Tap on Phone funcionando dentro do Sales App — do checkout à confirmação, sem sair do fluxo que sua equipe já usa.',
+      'proof.cta': 'Ver demo',
+      'proof.caption1': '1. Seleciona Tap on phone',
+      'proof.caption2': '2. Aproxima o cartão',
+      'proof.caption3': '3. Pagamento confirmado',
+      'proof.caption4': '4. Comprovante enviado',
+      'faq.title': 'Perguntas frequentes',
+      'faq.subtitle': 'O que as equipes de operação e tecnologia costumam perguntar antes de ativar.',
+      'faq.q1': 'Como ativo em minha loja?',
+      'faq.a1': '<p>Para ativar o Tap on Phone, é necessário instalar e configurar o VTEX Sales App e contratar a Cielo, informando que vai usar o Tap on Phone em conjunto com o Sales App. As etapas completas de contratação estão na <a href="https://docs.google.com/document/d/1V8-4C50OIVXzvdPHAJ_K3aHssA6btxANK--AzDZlLIk/edit?tab=t.0#heading=h.3sagm1xdtjfy" target="_blank" rel="noopener noreferrer">documentação</a> (em breve, pública). Fale com seu CE da VTEX para garantir o suporte correto durante a ativação.</p>',
+      'faq.q2': 'Como funciona?',
+      'faq.a2': '<p>Depois de ativado, o Tap on Phone aparece como mais um meio de pagamento dentro do fluxo de checkout do Sales App — não é um app à parte.</p><p>No checkout, selecione "Tap on phone crédito" ou "Tap on phone débito" como meio de pagamento e a quantidade de parcelas; a tela de aproximação carrega automaticamente; peça para o cliente aproximar o cartão; aguarde o processamento.</p><p>Com o pagamento aprovado, o comprovante é gerado na hora e pode ser compartilhado direto com o cliente ou impresso.</p><p>Ao iniciar uma nova venda, a tela de pedido concluído confirma que está tudo certo antes de seguir.</p>',
+      'faq.q3': 'Em quais dispositivos funciona?',
+      'faq.a3': '<p>O Tap on Phone funciona em smartphones Android com versão 12 ou superior e suporte a NFC (tecnologia de aproximação) — é essa combinação que permite transformar o celular em um terminal de pagamento. A maioria dos aparelhos Android intermediários e avançados já atende a esse requisito, como Samsung Galaxy A06, Samsung Galaxy A15, Motorola Moto G84, Xiaomi Redmi Note 13, Android 13, POCO X6 e tablets.</p>',
+      'faq.q4': 'Qual adquirente é usado?',
+      'faq.a4': '<p>A adquirência é feita pela Cielo, com taxas e contratação diretamente com a adquirente. Isso significa que a contratação do Tap on Phone depende de um contrato com a Cielo, além da configuração no Sales App — não é possível usar outra adquirente nesta fase.</p>',
+      'faq.q5': 'Posso parcelar as vendas?',
+      'faq.a5': '<p>Sim, é possível parcelar em até 12x, de acordo com as suas regras de negócio. A configuração do parcelamento é feita pela VTEX diretamente no provedor de pagamento, mediante abertura de um ticket específico para configurar o Tap on Phone — não é uma configuração self-service.</p>',
+      'faq.q6': 'Preciso comprar algum equipamento?',
+      'faq.a6': '<p>Não. O próprio smartphone Android do seu time já funciona como terminal de pagamento — não há necessidade de comprar, homologar ou distribuir nenhum equipamento adicional. É isso que permite escalar a operação em poucos dias em vez de meses.</p>',
+      'faq.q7': 'Quanto custa?',
+      'faq.a7': '<p>As taxas são negociadas e contratadas diretamente com a Cielo. A solução é disponibilizada com a solução de Sales App sem custo adicional.</p>',
+      'faq.q8': 'Funciona em qualquer operação?',
+      'faq.a8': '<p>Hoje funciona direto, sem ação manual, para venda no débito, crédito à vista e parcelado, em lojas próprias com CNPJ único, usando Android 12+ e adquirência Cielo.</p><p>Três pontos dependem de ação manual: parcelamento (configuração feita pela VTEX no momento da ativação via ticket), cancelamento de venda (feito pelo portal Cielo Conecta, não integrado ao Sales App) e o recomendável de manter outro meio de pagamento como fallback.</p><p>Ainda não é possível: split payment, restringir bandeiras aceitas, e atender franquias ou redes com múltiplos CNPJs.</p>',
+      'faq.q9': 'Tem documentação?',
+      'faq.a9': '<p>Sim — a documentação está disponível <a href="https://docs.google.com/document/d/1V8-4C50OIVXzvdPHAJ_K3aHssA6btxANK--AzDZlLIk/edit?tab=t.0#heading=h.3sagm1xdtjfy" target="_blank" rel="noopener noreferrer">neste documento</a>. A versão pública ainda está em breve.</p>',
+      'footer.title': 'Pronto para escalar sua operação?',
+      'footer.subtitle': 'Ative o Tap on Phone nas suas lojas com o apoio do seu CE da VTEX.',
+      'footer.scope': 'Disponível no Brasil, para smartphones Android 12+.',
+      'footer.note': 'Ativação sujeita a contrato e homologação junto a Cielo e VTEX.'
+    },
+    en: {
+      'cta.activate': 'Activate now',
+      'meta.description': 'Sales in your seller\'s hand. The order, on VTEX. With the Sales App, every seller sells and charges by tap directly from their phone — no lines, no fixed checkout, and the right order every time.',
+      'hero.title': 'No more checkout counters.<br>No more lines.',
+      'hero.subtitle': 'With the Sales App, every seller sells and charges by tap directly from their phone — no lines, no fixed checkout, and the right order every time.',
+      'hero.phone.hold': 'Hold here to pay',
+      'hero.phone.processing1': 'Just a moment…',
+      'hero.phone.processing2': 'Reading the card…',
+      'hero.phone.processing3': 'Finishing up…',
+      'hero.phone.approved': 'Payment approved!',
+      'hero.phone.cancel': 'Cancel',
+      'hero.phone.amount': '$69.90',
+      'hero.phone.placedTitle': 'Order confirmed',
+      'hero.phone.orderNumberLabel': 'Order number',
+      'hero.phone.itemCount': '1 item',
+      'hero.phone.itemName': 'Combined sweater',
+      'hero.phone.itemDesc': 'Color: Light beige\nSize: L',
+      'hero.phone.personalInfoLabel': 'Personal information',
+      'hero.phone.deliveryLabel': 'Delivery',
+      'hero.phone.deliveryEstimate': 'Get it by Mon, Nov 10',
+      'hero.phone.deliveryAddress': 'Ana Souza\n128 Flower Street\nLos Angeles, CA 90012',
+      'hero.phone.paymentMethod': '•••• 2999',
+      'benefits.title': 'Why Tap on Phone',
+      'benefits.subtitle': 'Three reasons to turn the phone your team already carries into your new point of sale.',
+      'benefits.card1.title': 'Sell anywhere',
+      'benefits.card1.desc': 'Sell, get paid by tap, and print the receipt with the invoice. The full sales flow without going to the checkout counter.',
+      'benefits.card2.title': 'Scale your operation in days',
+      'benefits.card2.desc': 'Activate Tap on Phone for all stores at once, without depending on the card-machine purchase and distribution cycle.',
+      'benefits.card3.title': "Don't lose sales",
+      'benefits.card3.desc': 'Integrated with the Sales App your operation already uses, with Cielo acquiring and contingency mode (coming soon) — keep accepting payments through Tap on Phone even if VTEX is down.',
+      'usecases.title': 'Where it fits into your operation',
+      'usecases.subtitle': 'From the everyday store floor to seasonal peaks and activations beyond it.',
+      'usecases.card1.title': 'Assisted selling on the store floor',
+      'usecases.card1.desc': 'The seller closes the sale wherever the customer is, without taking them to the checkout counter.',
+      'usecases.card2.title': 'Seasonal peaks',
+      'usecases.card2.desc': 'Black Friday and other peak dates, scaling points of sale without buying extra equipment.',
+      'usecases.card3.title': 'Brand activations at events',
+      'usecases.card3.desc': "Booths and events organized by the store network itself.",
+      'usecases.card4.title': 'Expansion of service points',
+      'usecases.card4.desc': 'New points within your own network, without waiting for the hardware purchase cycle.',
+      'proof.title': 'See it in action',
+      'proof.subtitle': 'See Tap on Phone working inside the Sales App — from checkout to confirmation, without leaving the flow your team already uses.',
+      'proof.cta': 'Watch demo',
+      'proof.caption1': '1. Selects Tap on phone',
+      'proof.caption2': '2. Taps the card',
+      'proof.caption3': '3. Payment confirmed',
+      'proof.caption4': '4. Receipt sent',
+      'faq.title': 'Frequently asked questions',
+      'faq.subtitle': 'What operations and tech teams usually ask before activating.',
+      'faq.q1': 'How do I activate it in my store?',
+      'faq.a1': '<p>To activate Tap on Phone, you need to install and configure the VTEX Sales App and sign up with Cielo, stating that you will use Tap on Phone together with the Sales App. The complete onboarding steps are in the <a href="https://docs.google.com/document/d/1V8-4C50OIVXzvdPHAJ_K3aHssA6btxANK--AzDZlLIk/edit?tab=t.0#heading=h.3sagm1xdtjfy" target="_blank" rel="noopener noreferrer">documentation</a> (public version coming soon). Talk to your VTEX CE to make sure you get the right support during activation.</p>',
+      'faq.q2': 'How does it work?',
+      'faq.a2': '<p>Once activated, Tap on Phone shows up as just another payment method inside the Sales App checkout flow — it is not a separate app.</p><p>At checkout, select "Tap on phone credit" or "Tap on phone debit" as the payment method and the number of installments; the tap screen loads automatically; ask the customer to tap their card; wait for processing.</p><p>Once payment is approved, the receipt is generated instantly and can be shared directly with the customer or printed.</p><p>When starting a new sale, the completed-order screen confirms everything is set before moving on.</p>',
+      'faq.q3': 'Which devices does it work on?',
+      'faq.a3': '<p>Tap on Phone works on Android smartphones running version 12 or higher with NFC support — that combination is what turns the phone into a payment terminal. Most mid-range and higher-end Android devices already meet this requirement, such as the Samsung Galaxy A06, Samsung Galaxy A15, Motorola Moto G84, Xiaomi Redmi Note 13, Android 13, POCO X6, and tablets.</p>',
+      'faq.q4': 'Which acquirer is used?',
+      'faq.a4': '<p>Acquiring is handled by Cielo, with fees and contracting done directly with the acquirer. This means activating Tap on Phone depends on a contract with Cielo, in addition to configuration in the Sales App — it is not possible to use another acquirer at this stage.</p>',
+      'faq.q5': 'Can I sell in installments?',
+      'faq.a5': '<p>Yes, you can split payments into up to 12 installments, according to your business rules. Installment configuration is done by VTEX directly with the payment provider, by opening a specific ticket to configure Tap on Phone — it is not a self-service setting.</p>',
+      'faq.q6': 'Do I need to buy any equipment?',
+      'faq.a6': "<p>No. Your team's own Android smartphone already works as a payment terminal — there is no need to buy, certify, or distribute any additional equipment. That is what allows you to scale the operation in a few days instead of months.</p>",
+      'faq.q7': 'How much does it cost?',
+      'faq.a7': '<p>Fees are negotiated and contracted directly with Cielo. The solution is made available together with the Sales App at no additional cost.</p>',
+      'faq.q8': 'Does it work for any operation?',
+      'faq.a8': '<p>Today it works out of the box, with no manual action, for debit, upfront credit, and installment sales, in own stores with a single CNPJ (company tax ID), using Android 12+ and Cielo acquiring.</p><p>Three points depend on manual action: installments (configured by VTEX at activation via ticket), sale cancellation (done through the Cielo Conecta portal, not integrated with the Sales App), and the recommendation to keep another payment method as a fallback.</p><p>Not yet possible: split payment, restricting accepted card brands, and serving franchises or networks with multiple CNPJs.</p>',
+      'faq.q9': 'Is there documentation?',
+      'faq.a9': '<p>Yes — the documentation is available <a href="https://docs.google.com/document/d/1V8-4C50OIVXzvdPHAJ_K3aHssA6btxANK--AzDZlLIk/edit?tab=t.0#heading=h.3sagm1xdtjfy" target="_blank" rel="noopener noreferrer">in this document</a>. The public version is coming soon.</p>',
+      'footer.title': 'Ready to scale your operation?',
+      'footer.subtitle': 'Activate Tap on Phone across your stores with support from your VTEX CE.',
+      'footer.scope': 'Available in Brazil, for Android 12+ smartphones.',
+      'footer.note': 'Activation subject to contract and approval with Cielo and VTEX.'
+    }
+  };
+
+  const langToggleBtn = document.getElementById('langToggle');
+  const langToggleLabel = document.getElementById('langToggleLabel');
+  const langTooltipEl = document.getElementById('langTooltip');
+  const metaDescriptionEl = document.getElementById('metaDescription');
+  const STORAGE_KEY = 'tapOnPhoneLang';
+  let tooltipHideTimer = null;
+
+  function flashTooltip() {
+    langTooltipEl.classList.add('is-visible');
+    clearTimeout(tooltipHideTimer);
+    tooltipHideTimer = setTimeout(() => langTooltipEl.classList.remove('is-visible'), 1800);
+  }
+
+  // Rebuilds the hero headline as one span per character so each can fade and
+  // rise on its own stagger. Re-run after every language swap, since setting
+  // innerHTML from the dictionary wipes the spans out.
+  const CHAR_STAGGER_MS = 26;
+  const HERO_CHAR_DURATION_MS = 500;   // matches the hero-char-in animation
+  const SUBTEXT_DURATION_MS = 600;     // matches the hero-subtext-in animation
+  function splitHeroTitle() {
+    const el = document.querySelector('[data-i18n-html="hero.title"]');
+    if (!el) return;
+
+    // <br> carries no text, so read it as a space — otherwise the label runs the
+    // two lines together ("caixas.O fim…").
+    const label = Array.from(el.childNodes)
+      .map((node) => (node.nodeName === 'BR' ? ' ' : node.textContent))
+      .join('')
+      .replace(/\s+/g, ' ')
+      .trim();
+    el.setAttribute('aria-label', label);
+    const frag = document.createDocumentFragment();
+    let charIndex = 0;
+
+    Array.from(el.childNodes).forEach((node) => {
+      if (node.nodeName === 'BR') {
+        frag.appendChild(document.createElement('br'));
+        return;
+      }
+      node.textContent.split(/(\s+)/).forEach((chunk) => {
+        if (!chunk) return;
+        if (/^\s+$/.test(chunk)) {
+          frag.appendChild(document.createTextNode(' '));
+          return;
+        }
+        const word = document.createElement('span');
+        word.className = 'hero-word';
+        Array.from(chunk).forEach((ch) => {
+          const span = document.createElement('span');
+          span.className = 'hero-char';
+          span.textContent = ch;
+          span.style.animationDelay = `${charIndex * CHAR_STAGGER_MS}ms`;
+          charIndex += 1;
+          word.appendChild(span);
+        });
+        frag.appendChild(word);
+      });
+    });
+
+    el.textContent = '';
+    el.appendChild(frag);
+    // The split text is decorative noise for assistive tech; the aria-label above
+    // carries the real headline.
+    Array.from(el.children).forEach((child) => child.setAttribute('aria-hidden', 'true'));
+
+    // Chain the rest of the hero intro off the headline: subtitle once the last
+    // character lands, then the phone once the subtitle has settled. Both depend
+    // on the character count, which differs per language.
+    const subtext = document.querySelector('.hero-content .subtext');
+    const phoneFrame = document.querySelector('.phone-frame');
+    if (charIndex > 0) {
+      const lastCharLands = (charIndex - 1) * CHAR_STAGGER_MS + HERO_CHAR_DURATION_MS;
+      if (subtext) subtext.style.animationDelay = `${lastCharLands}ms`;
+      if (phoneFrame) phoneFrame.style.animationDelay = `${lastCharLands + SUBTEXT_DURATION_MS}ms`;
+    }
+  }
+
+  function applyLanguage(lang) {
+    document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+    const dict = translations[lang];
+
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key] !== undefined) el.textContent = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-html');
+      if (dict[key] !== undefined) el.innerHTML = dict[key];
+    });
+    if (metaDescriptionEl && dict['meta.description']) {
+      metaDescriptionEl.setAttribute('content', dict['meta.description']);
+    }
+
+    const tooltipText = lang === 'pt' ? 'Change to English' : 'Trocar para Português';
+    langToggleLabel.textContent = lang === 'pt' ? 'EN' : 'PT';
+    langToggleBtn.setAttribute('aria-label', tooltipText);
+    langTooltipEl.textContent = tooltipText;
+
+    localStorage.setItem(STORAGE_KEY, lang);
+    splitHeroTitle();
+    if (relockProgressCards) relockProgressCards();
+  }
+
+  let currentLang = localStorage.getItem(STORAGE_KEY) || 'pt';
+  applyLanguage(currentLang);
+
+  langToggleBtn.addEventListener('click', () => {
+    currentLang = currentLang === 'pt' ? 'en' : 'pt';
+    applyLanguage(currentLang);
+    flashTooltip();
+  });
+  langToggleBtn.addEventListener('mouseleave', () => {
+    clearTimeout(tooltipHideTimer);
+    langTooltipEl.classList.remove('is-visible');
+  });
+
+</script>
+
+</body>
+</html>

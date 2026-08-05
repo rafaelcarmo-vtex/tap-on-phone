@@ -692,6 +692,10 @@
     .progress-card-num, .progress-card h3 { opacity: 1; }
     .progress-card-detail, .progress-card-detail p { max-height: none; opacity: 1; }
     .progress-card-detail p { width: auto; }
+    /* Every card's copy is shown at once here, but the typewriter reveal only
+       lifts visibility on the currently ".is-active" card (still cycled by JS
+       in the background) — without this, every other card's text stays hidden. */
+    .type-char { visibility: visible; }
   }
   .icon-box {
     width: 48px; height: 48px;

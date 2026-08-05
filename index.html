@@ -182,17 +182,24 @@
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 32px 140px;
+    /* Horizontal inset matches .section-pad, and .nav-inner carries the same
+       max-width as .container, so the bar's content lines up with the sections
+       at every viewport instead of only where a fixed padding happened to. */
+    padding: 32px 24px;
     background: transparent;
     transition: padding 0.3s ease, background 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease;
     border-bottom: 1px solid transparent;
   }
+  .nav-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
   /* Roomy over the hero, then tightens into a compact bar once past it. */
   .nav.is-scrolled {
-    padding: 16px 140px;
+    padding: 16px 24px;
     background: rgba(20, 32, 50, 0.82);
     backdrop-filter: blur(14px);
     border-bottom-color: rgba(255, 255, 255, 0.08);
@@ -907,13 +914,14 @@
 
   @media (max-width: 640px) {
     .section-pad { padding: 48px 20px; }
-    .nav, .nav.is-scrolled { padding: 12px 18px; }
+    .nav, .nav.is-scrolled { padding: 12px 20px; }
   }
 </style>
 </head>
 <body>
 
 <nav class="nav" id="nav">
+  <div class="nav-inner">
   <div class="nav-brand">
     <img class="nav-logo--white" src="assets/logo-vtex-white.svg" alt="VTEX Sales App">
     <img class="nav-logo--pink" src="assets/logo-vtex-pink.svg" alt="" aria-hidden="true">
@@ -930,6 +938,7 @@
       <span data-i18n="cta.activate">Quero ativar</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
     </a>
+  </div>
   </div>
 </nav>
 

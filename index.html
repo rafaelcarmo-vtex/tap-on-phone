@@ -798,6 +798,9 @@
     inset: 0;
     background: linear-gradient(180deg, rgba(20, 32, 50, 0.42), rgba(20, 32, 50, 0.66));
     transition: opacity 0.4s ease;
+    /* Purely decorative: without this it keeps swallowing clicks even at
+       opacity 0, and the player's controls become unreachable. */
+    pointer-events: none;
   }
   .demo-play {
     position: relative;

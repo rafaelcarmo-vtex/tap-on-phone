@@ -785,7 +785,7 @@
     transition: width 0.3s ease, background 0.3s ease;
   }
   .deck-dot.is-active { width: 22px; background: var(--accent); }
-  @media (max-width: 860px), (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce) {
     .deck-stage {
       height: auto;
       display: flex;
@@ -804,6 +804,13 @@
       transition: none;
     }
     .deck-nav { display: none; }
+  }
+  /* Below 860px there's no room for the desktop fan's full spread, but the
+     carousel (drag, tap-to-promote, dots) is kept — the JS already narrows
+     the spread to fit the viewport. Just a tighter card footprint here. */
+  @media (max-width: 860px) {
+    .deck-stage { height: 360px; }
+    .deck-card { min-height: 320px; padding: 24px; }
   }
 
   /* ---------- Prova / demonstração ---------- */
@@ -1410,8 +1417,7 @@ Los Angeles, CA 90012</p>
     const DRAG_THRESHOLD = 60;
     let active = 0;
 
-    const isStatic = () => window.matchMedia('(max-width: 860px)').matches
-      || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isStatic = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const render = () => {
       // Pull the fan in when the viewport is too narrow for the full spread,

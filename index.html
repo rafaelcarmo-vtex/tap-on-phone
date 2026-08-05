@@ -906,6 +906,172 @@
   .faq-a a { color: var(--accent); text-decoration: underline; }
   .faq-a p + p { margin-top: 10px; }
 
+  /* ---------- Activation guide modal ---------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(10, 14, 22, 0.72);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .modal-overlay[hidden] { display: none; }
+  .modal-overlay.is-open { opacity: 1; }
+  .modal-panel {
+    width: 100%;
+    max-width: 720px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.45);
+    transform: translateY(16px) scale(0.98);
+    transition: transform 0.3s cubic-bezier(.2,.8,.2,1);
+  }
+  .modal-overlay.is-open .modal-panel { transform: translateY(0) scale(1); }
+  @media (prefers-reduced-motion: reduce) {
+    .modal-overlay, .modal-panel { transition: none; }
+  }
+  .modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 24px 0;
+    flex-shrink: 0;
+  }
+  .modal-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px;
+  }
+  .modal-title { font-size: 20px; font-weight: 600; color: var(--ink); }
+  .modal-close {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    background: none;
+    color: var(--ink-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .modal-close svg { width: 16px; height: 16px; }
+  .modal-close:hover, .modal-close:focus-visible { border-color: var(--accent); color: var(--accent); }
+  .modal-steps-nav {
+    display: flex;
+    gap: 8px;
+    padding: 18px 24px;
+    overflow-x: auto;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-light);
+    scrollbar-width: none;
+  }
+  .modal-steps-nav::-webkit-scrollbar { display: none; }
+  .modal-step-tab {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    background: none;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink-secondary);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  }
+  .modal-step-tab.is-active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .modal-body { padding: 24px; overflow-y: auto; flex: 1 1 auto; }
+  .modal-step-title { font-size: 18px; font-weight: 600; color: var(--ink); margin: 0 0 14px; }
+  .modal-body p { font-size: 15px; color: var(--ink-secondary); margin: 0 0 12px; }
+  .modal-body p:last-child { margin-bottom: 0; }
+  .modal-list { margin: 0 0 12px; padding-left: 20px; }
+  .modal-list:last-child { margin-bottom: 0; }
+  .modal-list li { font-size: 15px; color: var(--ink-secondary); margin-bottom: 8px; }
+  .modal-list li:last-child { margin-bottom: 0; }
+  .modal-list li strong { color: var(--ink); }
+  .modal-body a { color: var(--accent); text-decoration: underline; }
+  .modal-callout {
+    padding: 14px 16px;
+    border-radius: 10px;
+    border-left: 3px solid;
+    margin: 0 0 16px;
+  }
+  .modal-callout:last-child { margin-bottom: 0; }
+  .modal-callout > strong { display: block; font-size: 13px; margin-bottom: 4px; }
+  .modal-callout p { margin: 0; font-size: 14px; }
+  .modal-callout--warning { background: #FFF6E6; border-left-color: #E8940C; }
+  .modal-callout--warning strong { color: #966009; }
+  .modal-callout--info { background: #EAF2FF; border-left-color: #2E6BE6; }
+  .modal-callout--info strong { color: #2E6BE6; }
+  .modal-callout--tip { background: #EAF6F0; border-left-color: #1DB954; }
+  .modal-callout--tip strong { color: #178A44; }
+  .modal-table-wrap { overflow-x: auto; margin: 0 0 16px; border: 1px solid var(--border-light); border-radius: 10px; }
+  .modal-table-wrap:last-child { margin-bottom: 0; }
+  .modal-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .modal-table th {
+    background: var(--dark-1);
+    color: #fff;
+    text-align: left;
+    font-weight: 500;
+    padding: 10px 14px;
+    white-space: nowrap;
+  }
+  .modal-table td { padding: 10px 14px; color: var(--ink-secondary); border-top: 1px solid var(--border-light); }
+  .modal-table tr:first-child td { border-top: none; }
+  .modal-table td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; }
+  .modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-light);
+    flex-shrink: 0;
+  }
+  .modal-doc-link { font-size: 13px; color: var(--ink-secondary); text-decoration: underline; }
+  .modal-doc-link:hover { color: var(--accent); }
+  .modal-pager { display: flex; align-items: center; gap: 14px; }
+  .modal-pager-count { font-family: var(--font-mono); font-size: 13px; color: var(--ink-secondary); }
+  .modal-arrow {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    background: none;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  }
+  .modal-arrow svg { width: 16px; height: 16px; }
+  .modal-arrow:hover:not(:disabled), .modal-arrow:focus-visible:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .modal-arrow:disabled { opacity: 0.35; cursor: default; }
+  @media (max-width: 640px) {
+    .modal-panel { max-height: 90vh; border-radius: 18px; }
+    .modal-header { padding: 20px 20px 0; }
+    .modal-steps-nav { padding: 16px 20px; }
+    .modal-body { padding: 20px; }
+    .modal-footer { padding: 14px 20px; }
+  }
+
   /* ---------- Ambient glow (reusable) ----------
      The hero's soft colour blobs, packaged for any dark block. The film grain is
      already global via body::before, so it lands on these on its own. Positions
@@ -984,10 +1150,10 @@
       </button>
       <span id="langTooltip" class="lang-tooltip" role="tooltip">Change to English</span>
     </div>
-    <a class="btn btn--primary" href="https://docs.google.com/document/d/1V8-4C50OIVXzvdPHAJ_K3aHssA6btxANK--AzDZlLIk/edit?tab=t.0#heading=h.3sagm1xdtjfy" target="_blank" rel="noopener noreferrer">
+    <button type="button" class="btn btn--primary" data-open-activation-modal>
       <span data-i18n="cta.activate">Quero ativar</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-    </a>
+    </button>
   </div>
   </div>
 </nav>
@@ -1261,10 +1427,10 @@ Los Angeles, CA 90012</p>
   <div class="container reveal" style="display:flex; flex-direction:column; align-items:center; gap:20px;">
     <h2 class="section-title" style="font-size:clamp(26px,3.4vw,36px);" data-i18n="footer.title">Pronto para escalar sua operação?</h2>
     <p class="subtext subtext--wide" style="margin:-8px auto 0;" data-i18n="footer.subtitle">Ative o Tap on Phone nas suas lojas com o apoio do seu CE da VTEX.</p>
-    <a class="btn btn--primary" href="https://docs.google.com/document/d/1V8-4C50OIVXzvdPHAJ_K3aHssA6btxANK--AzDZlLIk/edit?tab=t.0#heading=h.3sagm1xdtjfy" target="_blank" rel="noopener noreferrer">
+    <button type="button" class="btn btn--primary" data-open-activation-modal>
       <span data-i18n="cta.activate">Quero ativar</span>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
-    </a>
+    </button>
     <p class="scope-note" data-i18n="footer.scope">Disponível no Brasil, para smartphones Android 12+.</p>
     <p class="footer-note" data-i18n="footer.note">Ativação sujeita a contrato e homologação junto a Cielo e VTEX.</p>
     <div class="partners">
@@ -1274,6 +1440,163 @@ Los Angeles, CA 90012</p>
     </div>
   </div>
 </footer>
+
+<div class="modal-overlay" id="activationModal" role="dialog" aria-modal="true" aria-labelledby="activationModalTitle" hidden>
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div>
+        <p class="modal-eyebrow">Guia de ativação</p>
+        <h2 class="modal-title" id="activationModalTitle">Tap on Phone via Cielo</h2>
+      </div>
+      <button type="button" class="modal-close" id="activationModalClose" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-steps-nav" id="activationStepsNav"></div>
+
+    <div class="modal-body" id="activationModalBody">
+      <div class="modal-step" data-title="Avisos importantes">
+        <h3 class="modal-step-title">1. Avisos importantes</h3>
+        <div class="modal-callout modal-callout--warning">
+          <strong>Atenção</strong>
+          <p>O produto está em fase <strong>BETA</strong>. Disponível exclusivamente para o Brasil, em parceria com a Cielo.</p>
+        </div>
+      </div>
+
+      <div class="modal-step" data-title="Contratação" hidden>
+        <h3 class="modal-step-title">2. Contratação</h3>
+        <p>A contratação deve ser feita diretamente com o time Cielo, seguindo o processo abaixo.</p>
+        <div class="modal-callout modal-callout--warning">
+          <strong>Atenção</strong>
+          <p>Se o lojista ainda não é cliente Cielo, o fluxo terá uma etapa adicional com o time comercial. Nesse caso, procure o CE (Customer Experience) na VTEX para orientar sobre o melhor caminho.</p>
+        </div>
+        <ol class="modal-list">
+          <li>Enviar e-mail para <a href="mailto:suporte.integracao@cielo.com.br">suporte.integracao@cielo.com.br</a>.</li>
+          <li>Informar os dados abaixo (se já for cliente Cielo, confirme que os mesmos dados estão cadastrados):</li>
+        </ol>
+        <div class="modal-table-wrap">
+          <table class="modal-table">
+            <thead><tr><th>Campo</th><th>Descrição</th></tr></thead>
+            <tbody>
+              <tr><td>CNPJ</td><td>CNPJ do estabelecimento</td></tr>
+              <tr><td>Razão Social</td><td>Razão social do estabelecimento</td></tr>
+              <tr><td>Nome Fantasia</td><td>Nome fantasia do estabelecimento</td></tr>
+              <tr><td>E-mail estabelecimento</td><td>E-mail de contato do estabelecimento</td></tr>
+              <tr><td>Telefone estabelecimento</td><td>Telefone de contato do estabelecimento</td></tr>
+              <tr><td>CEP</td><td>CEP do endereço fiscal</td></tr>
+              <tr><td>Rua</td><td>Logradouro do endereço fiscal</td></tr>
+              <tr><td>Número</td><td>Número do endereço fiscal</td></tr>
+              <tr><td>Complemento</td><td>Complemento do endereço fiscal (se houver)</td></tr>
+              <tr><td>Bairro</td><td>Bairro do endereço fiscal</td></tr>
+              <tr><td>Cidade</td><td>Cidade do endereço fiscal</td></tr>
+              <tr><td>Estado</td><td>Estado (UF) do endereço fiscal</td></tr>
+              <tr><td>Nome do responsável</td><td>Nome completo do responsável pela contratação</td></tr>
+              <tr><td>E-mail do responsável</td><td>E-mail de contato do responsável pela contratação</td></tr>
+              <tr><td>MCC</td><td>Merchant Category Code do estabelecimento</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ol class="modal-list" start="3">
+          <li>Após retorno da Cielo confirmando que a contratação está concluída ("tudo OK"), comunique a VTEX via ticket.</li>
+          <li>Abra um ticket com a VTEX solicitando a ativação do produto.</li>
+        </ol>
+      </div>
+
+      <div class="modal-step" data-title="Ativação" hidden>
+        <h3 class="modal-step-title">3. Ativação</h3>
+        <p>O ticket de ativação aberto com a VTEX deve conter as seguintes informações:</p>
+        <ul class="modal-list">
+          <li>Se a EC (conta) já foi criada na Cielo — sim ou não.</li>
+          <li>O CNPJ do cliente, cadastrado da mesma forma que consta na Cielo.</li>
+          <li>Quais modalidades serão ofertadas: crédito, débito ou ambos — e o número de parcelas.</li>
+          <li>Se desejado testar a funcionalidade em apenas uma loja ou usuário: informe ID e nome da loja, ou e-mail do vendedor cadastrado.</li>
+        </ul>
+        <div class="modal-callout modal-callout--info">
+          <strong>SLA</strong>
+          <p>A ativação ocorre em até 5 (cinco) dias úteis após a abertura do ticket com todas as informações completas.</p>
+        </div>
+      </div>
+
+      <div class="modal-step" data-title="Fluxo de uso" hidden>
+        <h3 class="modal-step-title">4. Fluxo de uso</h3>
+        <p>Após ativado, o produto pode ser utilizado como maquininha, funcionando como método de pagamento dentro do fluxo de checkout/pagamento da loja.</p>
+        <ol class="modal-list">
+          <li>Selecione o método de pagamento.</li>
+          <li>O Tap on Phone inicializa e a tela de aproximação é renderizada.</li>
+          <li>Aproxime o cartão.</li>
+          <li>Aguarde o processamento.</li>
+          <li>Compra aprovada: você recebe o comprovante e pode compartilhar com o cliente.</li>
+          <li>Ao clicar em "nova venda", a tela de pedido concluído é exibida.</li>
+        </ol>
+        <div class="modal-callout modal-callout--warning">
+          <strong>Atenção</strong>
+          <p>É recomendado sempre ter ao menos dois métodos de pagamento configurados como fallback. Não use o Tap on Phone (assim como qualquer outro método) como solução de pagamento única para lojistas.</p>
+        </div>
+      </div>
+
+      <div class="modal-step" data-title="Funcionalidades disponíveis" hidden>
+        <h3 class="modal-step-title">5. Funcionalidades disponíveis</h3>
+        <div class="modal-table-wrap">
+          <table class="modal-table">
+            <thead><tr><th>Funcionalidade</th><th>Disponibilidade</th></tr></thead>
+            <tbody>
+              <tr><td>Cancelamento integrado</td><td>Não disponível — depende de acesso ao portal Cielo Conecta</td></tr>
+              <tr><td>Split payment</td><td>Não disponível</td></tr>
+              <tr><td>Configuração de parcelamento</td><td>Disponível</td></tr>
+              <tr><td>Configuração de bandeira de cartão</td><td>Não disponível (Elo, Mastercard, Visa)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-step" data-title="Casos de uso" hidden>
+        <h3 class="modal-step-title">6. Casos de uso</h3>
+        <p>O Tap on Phone amplia a venda assistida ao transformar qualquer celular Android compatível em um terminal de pagamento, sem depender de hardware dedicado fixo. Isso viabiliza cenários como:</p>
+        <ul class="modal-list">
+          <li><strong>Vendas móveis na loja</strong> — o vendedor conclui a venda em qualquer ponto do salão, sem levar o cliente a um caixa fixo.</li>
+          <li><strong>Fura-fila</strong> — reduz filas em horários de pico, com pagamento em qualquer lugar da loja.</li>
+          <li><strong>Mobilidade em lojas</strong> — atendimento assistido em diferentes áreas do ponto de venda.</li>
+          <li><strong>Eventos e ativações</strong> — estandes, ativações de marca e pontos de venda temporários.</li>
+          <li><strong>Lojas móveis (pop-ups)</strong> — operação completa de pagamento sem infraestrutura fixa de POS.</li>
+        </ul>
+        <div class="modal-callout modal-callout--tip">
+          <strong>Dica</strong>
+          <p>Combine o Tap on Phone com o Sales App e use a transferência de carrinho: o carrinho é montado no desktop e capturado no dispositivo móvel só para concluir o pagamento por aproximação.</p>
+        </div>
+      </div>
+
+      <div class="modal-step" data-title="Requisitos" hidden>
+        <h3 class="modal-step-title">7. Requisitos</h3>
+        <ul class="modal-list">
+          <li>Celular Android versão 12 ou superior.</li>
+          <li>Contrato com a Cielo e criação de credenciais para uso do Tap on Phone.</li>
+        </ul>
+      </div>
+
+      <div class="modal-step" data-title="Recomendações" hidden>
+        <h3 class="modal-step-title">8. Recomendações</h3>
+        <ul class="modal-list">
+          <li>Testar o fluxo de ponta a ponta, incluindo a conciliação pós-compra, antes de operar em produção.</li>
+          <li>Manter sempre um segundo método de pagamento ativo, para não prejudicar a operação caso um dos métodos apresente intermitência.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <a class="modal-doc-link" href="https://docs.google.com/document/d/1V8-4C50OIVXzvdPHAJ_K3aHssA6btxANK--AzDZlLIk/edit?tab=t.0#heading=h.3sagm1xdtjfy" target="_blank" rel="noopener noreferrer">Ver documento original ↗</a>
+      <div class="modal-pager">
+        <button type="button" class="modal-arrow" id="activationPrev" aria-label="Passo anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <span class="modal-pager-count"><span id="activationCurrent">01</span>/08</span>
+        <button type="button" class="modal-arrow" id="activationNext" aria-label="Próximo passo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   const nav = document.getElementById('nav');
@@ -2061,6 +2384,78 @@ Los Angeles, CA 90012</p>
     clearTimeout(tooltipHideTimer);
     langTooltipEl.classList.remove('is-visible');
   });
+
+  // ---------- Activation guide modal ----------
+  const activationModalEl = document.getElementById('activationModal');
+  if (activationModalEl) {
+    const activationSteps = Array.from(activationModalEl.querySelectorAll('.modal-step'));
+    const activationStepsNavEl = document.getElementById('activationStepsNav');
+    const activationBodyEl = document.getElementById('activationModalBody');
+    const activationCurrentEl = document.getElementById('activationCurrent');
+    const activationPrevBtn = document.getElementById('activationPrev');
+    const activationNextBtn = document.getElementById('activationNext');
+    const activationCloseBtn = document.getElementById('activationModalClose');
+    const activationTotal = activationSteps.length;
+    let activationIndex = 0;
+    let activationLastFocused = null;
+
+    const activationTabs = activationSteps.map((step, i) => {
+      const tab = document.createElement('button');
+      tab.type = 'button';
+      tab.className = 'modal-step-tab';
+      tab.textContent = String(i + 1).padStart(2, '0');
+      tab.setAttribute('aria-label', `Passo ${i + 1}: ${step.dataset.title}`);
+      tab.addEventListener('click', () => { activationIndex = i; renderActivationStep(); });
+      activationStepsNavEl.appendChild(tab);
+      return tab;
+    });
+
+    function renderActivationStep() {
+      activationSteps.forEach((step, i) => { step.hidden = i !== activationIndex; });
+      activationTabs.forEach((tab, i) => tab.classList.toggle('is-active', i === activationIndex));
+      activationCurrentEl.textContent = String(activationIndex + 1).padStart(2, '0');
+      activationPrevBtn.disabled = activationIndex === 0;
+      activationNextBtn.disabled = activationIndex === activationTotal - 1;
+      activationBodyEl.scrollTop = 0;
+      activationTabs[activationIndex].scrollIntoView({ block: 'nearest', inline: 'center' });
+    }
+
+    function openActivationModal() {
+      activationLastFocused = document.activeElement;
+      activationIndex = 0;
+      renderActivationStep();
+      activationModalEl.hidden = false;
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(() => activationModalEl.classList.add('is-open'));
+      activationCloseBtn.focus();
+    }
+    function closeActivationModal() {
+      activationModalEl.classList.remove('is-open');
+      document.body.style.overflow = '';
+      setTimeout(() => { activationModalEl.hidden = true; }, 250);
+      if (activationLastFocused) activationLastFocused.focus();
+    }
+
+    document.querySelectorAll('[data-open-activation-modal]').forEach((btn) => {
+      btn.addEventListener('click', openActivationModal);
+    });
+    activationCloseBtn.addEventListener('click', closeActivationModal);
+    activationModalEl.addEventListener('click', (e) => {
+      if (e.target === activationModalEl) closeActivationModal();
+    });
+    activationPrevBtn.addEventListener('click', () => {
+      if (activationIndex > 0) { activationIndex--; renderActivationStep(); }
+    });
+    activationNextBtn.addEventListener('click', () => {
+      if (activationIndex < activationTotal - 1) { activationIndex++; renderActivationStep(); }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (activationModalEl.hidden) return;
+      if (e.key === 'Escape') closeActivationModal();
+      if (e.key === 'ArrowRight' && !activationNextBtn.disabled) activationNextBtn.click();
+      if (e.key === 'ArrowLeft' && !activationPrevBtn.disabled) activationPrevBtn.click();
+    });
+  }
 
 </script>
 

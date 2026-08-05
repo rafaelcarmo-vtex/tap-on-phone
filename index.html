@@ -119,11 +119,60 @@
     transition: transform 0.2s ease, opacity 0.2s ease;
   }
   .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-  .btn:hover { opacity: 0.9; }
   .btn:active { transform: scale(0.97); }
   .btn--primary { background: var(--accent); color: #fff; }
   .btn--secondary { background: none; border: 1px solid var(--border-light); color: var(--ink); }
-  .btn--secondary:hover { background: #F5F5F7; }
+
+  /* ---------- Wave reveal on hover ----------
+     An oversized blob sits just below the button and rises on hover; because it is
+     far wider than tall at the crossing point, its rounded top edge reads as a wave
+     sweeping through. It flattens to a rectangle as it lands, so the fill ends up
+     covering the pill evenly. The label rides above it and flips colour on the way. */
+  .btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .btn > * { position: relative; z-index: 1; }
+  .btn::before {
+    content: "";
+    position: absolute;
+    left: -25%;
+    bottom: 0;
+    width: 150%;
+    /* Height tracks the button, so the crest spends the whole transition crossing
+       it. Sizing the blob independently would make it clear the button in the
+       first fraction of the travel and then just sit there. */
+    height: 100%;
+    background: var(--wave, #fff);
+    border-radius: 50% 50% 0 0 / 62% 62% 0 0;
+    transform: translateY(112%);
+    transition: transform 0.55s cubic-bezier(.45, 0, .2, 1), border-radius 0.55s ease;
+    z-index: 0;
+  }
+  .btn:hover::before,
+  .btn:focus-visible::before {
+    transform: translateY(0);
+    border-radius: 0;
+  }
+  /* The label flips only once the crest has swept past it, so it is never drawn
+     in the same colour as the half it is sitting on. Leaving on hover-out it
+     flips back almost immediately, as the wave retreats from the text first. */
+  .btn,
+  .btn > * { transition: color 0.14s ease 0.05s, transform 0.2s ease; }
+  .btn:hover, .btn:hover > *,
+  .btn:focus-visible, .btn:focus-visible > * { transition: color 0.14s ease 0.28s, transform 0.2s ease; }
+
+  /* Pink pill turns white, with the label picking up the accent. */
+  .btn--primary { --wave: #fff; }
+  .btn--primary:hover, .btn--primary:focus-visible { color: var(--accent); }
+  /* White pill turns pink, with the label going white. */
+  .demo-play { --wave: var(--accent); }
+  .demo-play:hover, .demo-play:focus-visible { color: #fff; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn::before { transition: none; }
+  }
 
   .scope-note { font-size: 13px; font-weight: 400; color: var(--ink-secondary-on-dark); }
   .section--light .scope-note { color: var(--ink-secondary); }
@@ -755,7 +804,6 @@
     color: var(--ink);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
   }
-  .demo-play:hover { background: #fff; opacity: 1; }
   @media (max-width: 640px) {
     .demo-frame { border-radius: 16px; margin-top: 28px; }
   }
@@ -793,12 +841,15 @@
   .faq-icon svg { display: block; width: 18px; height: 18px; }
   .faq-q:hover .faq-icon { border-color: var(--accent); color: var(--accent); }
   .faq-item.open .faq-icon { transform: rotate(180deg); }
-  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  /* max-height is driven in JS from the panel's real height, so both directions
+     travel the same distance and read at the same speed. A fixed cap would make
+     opening look instant and closing look delayed, since the visible content
+     only occupies part of the range. */
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(.4, 0, .2, 1); }
   .faq-a > div { padding: 0 0px 20px; }
   .faq-a p { font-size: 15px; color: var(--ink-secondary); }
   .faq-a a { color: var(--accent); text-decoration: underline; }
   .faq-a p + p { margin-top: 10px; }
-  .faq-item.open .faq-a { max-height: 500px; }
 
   /* ---------- Footer / CTA final ---------- */
   .footer-note { font-size: 12px; color: var(--ink-secondary-on-dark); margin-top: 24px; max-width: 520px; margin-left: auto; margin-right: auto; }
@@ -1369,14 +1420,27 @@ Los Angeles, CA 90012</p>
     demoIo.observe(demoVideoEl);
   }
 
-  document.querySelectorAll('.faq-item').forEach((item) => {
+  const faqItems = Array.from(document.querySelectorAll('.faq-item'));
+  faqItems.forEach((item) => {
     const q = item.querySelector('.faq-q');
+    const panel = item.querySelector('.faq-a');
     q.addEventListener('click', () => {
-      const isOpen = item.classList.contains('open');
-      item.classList.toggle('open', !isOpen);
-      q.setAttribute('aria-expanded', String(!isOpen));
+      const willOpen = !item.classList.contains('open');
+      item.classList.toggle('open', willOpen);
+      q.setAttribute('aria-expanded', String(willOpen));
+      panel.style.maxHeight = willOpen ? `${panel.scrollHeight}px` : '';
     });
   });
+  // Reflow the open panels when their content changes size — the copy is a
+  // different length per language, and a narrower window rewraps it.
+  const resyncOpenFaq = () => {
+    faqItems.forEach((item) => {
+      if (!item.classList.contains('open')) return;
+      const panel = item.querySelector('.faq-a');
+      panel.style.maxHeight = `${panel.scrollHeight}px`;
+    });
+  };
+  window.addEventListener('resize', resyncOpenFaq);
 
   // ---------- Hero card: scroll-driven slide-in, tucks behind the phone, phone "processes" the payment, then hands off to the order-confirmed screen ----------
   const phoneStageEl = document.getElementById('phoneStage');
@@ -1835,6 +1899,7 @@ Los Angeles, CA 90012</p>
     localStorage.setItem(STORAGE_KEY, lang);
     splitHeroTitle();
     if (relockProgressCards) relockProgressCards();
+    if (typeof resyncOpenFaq === 'function') resyncOpenFaq();
   }
 
   let currentLang = localStorage.getItem(STORAGE_KEY) || 'pt';

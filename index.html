@@ -802,6 +802,18 @@
 
   /* ---------- Footer / CTA final ---------- */
   .footer-note { font-size: 12px; color: var(--ink-secondary-on-dark); margin-top: 24px; max-width: 520px; margin-left: auto; margin-right: auto; }
+  /* Partner lockup. The -on-dark artwork is the white/reversed cut, which is what
+     this dark footer needs; the -on-light files are the counterparts if the block
+     ever moves onto a light section. */
+  .partners {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 4px;
+  }
+  .partner-logo { height: 22px; width: auto; opacity: 0.85; }
+  .partner-divider { width: 1px; height: 20px; background: rgba(255, 255, 255, 0.18); }
 
   @media (max-width: 640px) {
     .section-pad { padding: 48px 20px; }
@@ -1098,6 +1110,11 @@ Los Angeles, CA 90012</p>
     </a>
     <p class="scope-note" data-i18n="footer.scope">Disponível no Brasil, para smartphones Android 12+.</p>
     <p class="footer-note" data-i18n="footer.note">Ativação sujeita a contrato e homologação junto a Cielo e VTEX.</p>
+    <div class="partners">
+      <img class="partner-logo" src="assets/vtex-on-dark.png" alt="VTEX">
+      <span class="partner-divider" aria-hidden="true"></span>
+      <img class="partner-logo" src="assets/cielo-on-dark.svg" alt="Cielo">
+    </div>
   </div>
 </footer>
 

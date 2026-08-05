@@ -791,11 +791,13 @@
     /* Overscaled so the blur never bleeds soft transparent edges into the frame. */
     filter: blur(16px);
     transform: scale(1.12);
+    transition: filter 0.5s ease, transform 0.5s ease;
   }
   .demo-scrim {
     position: absolute;
     inset: 0;
     background: linear-gradient(180deg, rgba(20, 32, 50, 0.42), rgba(20, 32, 50, 0.66));
+    transition: opacity 0.4s ease;
   }
   .demo-play {
     position: relative;
@@ -804,6 +806,12 @@
     color: var(--ink);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
   }
+  /* Watching state: the backdrop becomes the actual player — grain-free, unscaled,
+     with the scrim and the trigger out of the way so the native controls are the
+     only thing left on top of the footage. */
+  .demo-frame.is-playing .demo-video { filter: none; transform: none; }
+  .demo-frame.is-playing .demo-scrim { opacity: 0; }
+  .demo-frame.is-playing .demo-play { opacity: 0; visibility: hidden; }
   @media (max-width: 640px) {
     .demo-frame { border-radius: 16px; margin-top: 28px; }
   }
@@ -1115,10 +1123,10 @@ Los Angeles, CA 90012</p>
       <video class="demo-video" id="demoVideo" src="assets/TapOnPhoneDemo.mp4"
              muted loop playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
       <span class="demo-scrim" aria-hidden="true"></span>
-      <a class="btn demo-play" href="https://drive.google.com/file/d/1LtfRjt7RJLccBQx68ejma2tJ5N7UTZUJ/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+      <button type="button" class="btn demo-play" id="demoPlay">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"/><circle cx="12" cy="12" r="10"/></svg>
         <span data-i18n="proof.cta">Ver demo</span>
-      </a>
+      </button>
     </div>
   </div>
 </section>
@@ -1434,18 +1442,43 @@ Los Angeles, CA 90012</p>
     render();
   }
 
-  // Demo backdrop: a 32 MB file, so it stays unfetched (preload="none") until the
-  // frame is actually on screen, and pauses again once it scrolls away.
+  // The demo starts life as a muted, blurred backdrop and becomes a real player
+  // on click. It is a 32 MB file, so preload="none" keeps it unfetched until the
+  // frame is on screen.
   const demoVideoEl = document.getElementById('demoVideo');
-  if (demoVideoEl && 'IntersectionObserver' in window
-      && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const demoIo = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) demoVideoEl.play().catch(() => {});
-        else demoVideoEl.pause();
-      });
-    }, { threshold: 0.25 });
-    demoIo.observe(demoVideoEl);
+  const demoFrameEl = document.getElementById('demoFrame');
+  const demoPlayEl = document.getElementById('demoPlay');
+  if (demoVideoEl && demoFrameEl && demoPlayEl) {
+    let isWatching = false;
+
+    if ('IntersectionObserver' in window
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const demoIo = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Never resume on its own once the visitor has taken over — audio
+            // restarting on scroll-back would be jarring.
+            if (!isWatching) demoVideoEl.play().catch(() => {});
+          } else {
+            demoVideoEl.pause();
+          }
+        });
+      }, { threshold: 0.25 });
+      demoIo.observe(demoVideoEl);
+    }
+
+    demoPlayEl.addEventListener('click', () => {
+      isWatching = true;
+      demoFrameEl.classList.add('is-playing');
+      demoVideoEl.loop = false;
+      demoVideoEl.muted = false;
+      demoVideoEl.controls = true;
+      demoVideoEl.removeAttribute('aria-hidden');
+      demoVideoEl.removeAttribute('tabindex');
+      demoVideoEl.currentTime = 0;
+      demoVideoEl.play().catch(() => {});
+      demoVideoEl.focus({ preventScroll: true });
+    });
   }
 
   const faqItems = Array.from(document.querySelectorAll('.faq-item'));
